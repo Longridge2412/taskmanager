@@ -28,6 +28,7 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   --amber-bg:rgba(184,114,14,0.09);
   --red:#c03030;
   --green:#4a7a3a;
+  --green-bg:rgba(74,122,58,0.09);
   --blue:#3a6a9a;
   --blue-bg:rgba(58,106,154,0.09);
   --serif:'DM Serif Display',serif;
@@ -49,6 +50,66 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   transition:opacity 0.25s ease;
 }
 .screen.active{opacity:1;pointer-events:all;}
+
+/* ══════════════════════════
+   SETUP
+══════════════════════════ */
+#setup{background:var(--bg);}
+.setup-inner{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 28px;text-align:center;
+}
+.setup-logo{margin-bottom:28px;}
+.setup-logo img{height:40px;width:auto;opacity:0.9;}
+.setup-title{
+  font-family:var(--serif);font-size:22px;
+  color:var(--text);line-height:1.4;margin-bottom:8px;
+}
+.setup-sub{
+  font-size:12px;color:var(--text3);font-family:var(--mono);
+  line-height:1.8;margin-bottom:24px;max-width:320px;
+}
+.setup-sub a{color:var(--amber);text-decoration:none;}
+
+.setup-field{width:100%;margin-bottom:14px;text-align:left;}
+.setup-field-label{
+  font-size:10px;font-family:var(--mono);color:var(--text3);
+  letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;padding-left:4px;
+}
+.setup-field-label .req{color:var(--red);font-size:9px;margin-left:4px;}
+.setup-field-label .opt{color:var(--text3);font-size:9px;margin-left:4px;font-style:italic;}
+.setup-input-wrap{
+  width:100%;background:var(--bg3);
+  border:0.5px solid var(--line2);border-radius:12px;
+  overflow:hidden;
+}
+.setup-input{
+  width:100%;padding:13px 16px;border:none;outline:none;
+  font-family:var(--mono);font-size:13px;
+  color:var(--text);background:transparent;letter-spacing:0.02em;
+}
+.setup-input::placeholder{color:var(--text3);}
+
+.setup-err{
+  font-size:11px;font-family:var(--mono);
+  color:var(--red);margin-top:6px;display:none;padding-left:4px;
+}
+.setup-err.show{display:block;}
+
+.btn-save{
+  width:100%;padding:14px;margin-top:8px;
+  background:var(--amber);border:none;border-radius:12px;
+  font-family:var(--serif);font-size:17px;color:#fff8ee;
+  cursor:pointer;transition:opacity .15s;
+}
+.btn-save:active{opacity:.85;}
+.btn-save:disabled{opacity:.4;}
+.setup-note{
+  margin-top:16px;font-size:11px;
+  color:var(--text3);font-family:var(--mono);line-height:1.6;
+  max-width:300px;
+}
 
 /* ══════════════════════════
    RITUAL
@@ -104,8 +165,9 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 .ld:nth-child(2){animation-delay:.2s;}.ld:nth-child(3){animation-delay:.4s;}
 @keyframes ld{0%,80%,100%{transform:scale(.8);opacity:.3}40%{transform:scale(1.1);opacity:1}}
 .load-t{font-size:12px;color:var(--text3);font-family:var(--mono);}
-.terr{padding:14px 16px;font-size:12px;color:var(--text3);font-family:var(--mono);display:none;}
+.terr{padding:14px 16px;font-size:12px;color:var(--text3);font-family:var(--mono);display:none;line-height:1.6;}
 .terr.on{display:block;}
+.terr a{color:var(--amber);}
 
 .ti{
   padding:11px 16px;border-bottom:0.5px solid var(--line);
@@ -126,10 +188,15 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 .tiproj{font-size:10px;font-family:var(--mono);letter-spacing:.04em;margin-bottom:2px;}
 .tiname{font-size:14px;color:var(--text);line-height:1.35;}
 .timeta{font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
+.timeta.overdue{color:var(--red);}
 .tidur{
   flex-shrink:0;display:flex;align-items:center;
-  font-size:11px;font-family:var(--mono);color:var(--text3);
+  font-size:11px;font-family:var(--mono);color:var(--amber);
+  background:var(--amber-bg);padding:3px 8px;border-radius:12px;
+  cursor:pointer;user-select:none;-webkit-user-select:none;
+  transition:transform .1s;
 }
+.tidur:active{transform:scale(0.9);}
 
 .manual-box{
   background:var(--bg3);border:0.5px solid var(--line2);border-radius:14px;overflow:hidden;
@@ -180,11 +247,11 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   display:flex;align-items:center;justify-content:center;
   font-size:9px;font-family:var(--mono);color:var(--amber);
 }
-.btn-ritual{
+.btn-icon{
   width:30px;height:30px;border-radius:50%;
   background:var(--bg2);border:0.5px solid var(--line2);
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:13px;color:var(--text2);
+  cursor:pointer;font-size:13px;color:var(--text3);
 }
 
 /* NOW / NEXT CARD */
@@ -281,12 +348,12 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 .tb-dur{font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:1px;}
 
 .tb-done{width:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.dc{
+.dc-circle{
   width:22px;height:22px;border-radius:50%;
   border:1.5px solid var(--line2);
   display:flex;align-items:center;justify-content:center;transition:all .2s;
 }
-.tb.done .dc{background:var(--green);border-color:var(--green);}
+.tb.done .dc-circle{background:var(--green);border-color:var(--green);}
 .dci{display:none;color:#fff;font-size:10px;}
 .tb.done .dci{display:block;}
 .tb.brk .tb-done,.tb.cafe-b .tb-done{visibility:hidden;}
@@ -353,7 +420,6 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 }
 .fcd-lbl{font-size:10px;color:var(--text3);font-family:var(--mono);letter-spacing:.04em;}
 
-/* Focus actions — 3 states */
 .focus-actions{display:flex;gap:8px;width:100%;}
 .fbtn{
   flex:1;padding:13px 0;
@@ -365,6 +431,17 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 .fbtn.blue{background:var(--blue);border-color:var(--blue);color:#fff;}
 .fbtn:active{opacity:.8;}
 
+/* TOAST */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--text);color:#fff;
+  font-family:var(--mono);font-size:12px;
+  padding:10px 20px;border-radius:10px;
+  opacity:0;transition:all .3s ease;pointer-events:none;
+  z-index:999;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
 .foot-logo{
   position:absolute;bottom:0;left:0;right:0;
   display:flex;justify-content:center;align-items:flex-end;
@@ -374,62 +451,6 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   background:linear-gradient(to top,rgba(248,246,242,0.94) 50%,transparent);
 }
 .foot-logo img{height:14px;width:auto;opacity:0.22;filter:grayscale(100%);}
-
-/* ── API KEY SETUP ── */
-#setup{background:var(--bg);}
-.setup-inner{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:40px 32px;text-align:center;
-}
-.setup-logo{margin-bottom:32px;}
-.setup-logo img{height:40px;width:auto;opacity:0.9;}
-.setup-title{
-  font-family:var(--serif);font-size:22px;
-  color:var(--text);line-height:1.4;margin-bottom:8px;
-}
-.setup-sub{
-  font-size:12px;color:var(--text3);font-family:var(--mono);
-  line-height:1.7;margin-bottom:28px;
-}
-.setup-sub a{color:var(--amber);text-decoration:none;}
-.key-input-wrap{
-  width:100%;background:var(--bg3);
-  border:0.5px solid var(--line2);border-radius:12px;
-  overflow:hidden;margin-bottom:12px;
-}
-.key-input{
-  width:100%;padding:14px 16px;
-  border:none;outline:none;
-  font-family:var(--mono);font-size:13px;
-  color:var(--text);background:transparent;
-  letter-spacing:0.02em;
-}
-.key-input::placeholder{color:var(--text3);}
-.key-error{
-  font-size:11px;font-family:var(--mono);
-  color:var(--red);margin-bottom:12px;display:none;
-}
-.key-error.show{display:block;}
-.btn-save-key{
-  width:100%;padding:14px;
-  background:var(--amber);border:none;border-radius:12px;
-  font-family:var(--serif);font-size:17px;color:#fff8ee;
-  cursor:pointer;transition:opacity .15s;
-}
-.btn-save-key:active{opacity:.85;}
-.btn-save-key:disabled{opacity:.4;}
-.setup-note{
-  margin-top:20px;font-size:11px;
-  color:var(--text3);font-family:var(--mono);line-height:1.6;
-}
-/* settings gear in tl-header */
-.btn-settings{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--bg2);border:0.5px solid var(--line2);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:13px;color:var(--text2);
-}
 </style>
 </head>
 <body>
@@ -439,23 +460,42 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 <div class="screen" id="setup">
   <div class="setup-inner">
     <div class="setup-logo"><img src="./一念無想.png" alt="一念無想"></div>
-    <div class="setup-title">APIキーを設定してください</div>
+    <div class="setup-title">接続設定</div>
     <div class="setup-sub">
-      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> で<br>
-      APIキーを作成してここに貼り付けてください。<br>
-      キーはこのデバイスにのみ保存されます。
+      スプレッドシートとの連携に<br>GAS Web AppのURLが必要です。
     </div>
-    <div class="key-input-wrap">
-      <input class="key-input" id="keyInput" type="password"
-        placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+
+    <div class="setup-field">
+      <div class="setup-field-label">GAS Web App URL<span class="req">必須</span></div>
+      <div class="setup-input-wrap">
+        <input class="setup-input" id="gasInput" type="url"
+          placeholder="https://script.google.com/macros/s/..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="setup-err" id="gasErr">GAS Web AppのURLを入力してください</div>
     </div>
-    <div class="key-error" id="keyError">キーが正しくありません（sk-ant- で始まる必要があります）</div>
-    <button class="btn-save-key" id="btnSaveKey" onclick="saveKey()" disabled>
+
+    <div class="setup-field">
+      <div class="setup-field-label">Anthropic API Key<span class="opt">任意</span></div>
+      <div class="setup-input-wrap">
+        <input class="setup-input" id="keyInput" type="password"
+          placeholder="sk-ant-...（再スケジュール機能に使用）" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div class="setup-field">
+      <div class="setup-field-label">GASトークン<span class="opt">任意</span></div>
+      <div class="setup-input-wrap">
+        <input class="setup-input" id="tokenInput" type="text"
+          placeholder="lb-2026（GAS側と一致させる）" autocomplete="off" spellcheck="false" value="lb-2026">
+      </div>
+    </div>
+
+    <button class="btn-save" id="btnSave" onclick="saveSettings()" disabled>
       保存してはじめる
     </button>
     <div class="setup-note">
-      キーはブラウザのローカルストレージに保存されます。<br>
-      他の人と共有するデバイスでは使用しないでください。
+      設定はこのブラウザにのみ保存されます。<br>
+      APIキーは再スケジュール機能でのみ使用します。
     </div>
   </div>
 </div>
@@ -486,16 +526,16 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
         </div>
         <div class="load-wrap on" id="loadWrap">
           <div class="ldots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
-          <div class="load-t">読み込み中...</div>
+          <div class="load-t">スプレッドシートから取得中...</div>
         </div>
         <div id="tlist"></div>
-        <div class="terr" id="terr">読み込めませんでした。下の欄に手動入力してください。</div>
+        <div class="terr" id="terr"></div>
       </div>
     </div>
     <div class="rstep" id="rs3">
       <div class="rstep-label"><b>3</b>タスクを追加（任意）</div>
       <div class="manual-box">
-        <textarea id="manIn" placeholder="POSSIBLE COFFEE,サブスク設計,高&#10;石高プロジェクト,報告書作成,高,120&#10;（プロジェクト,タスク名,優先度,時間(分)）"></textarea>
+        <textarea id="manIn" placeholder="POSSIBLE COFFEE,サブスク設計,高,60&#10;石高プロジェクト,報告書作成,中,120&#10;（プロジェクト,タスク名,優先度,時間分）"></textarea>
       </div>
     </div>
   </div>
@@ -522,8 +562,8 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
         </svg>
         <div class="prog-pct" id="progPct">0%</div>
       </div>
-      <div class="btn-ritual" onclick="goRitual()">✦</div>
-      <div class="btn-settings" onclick="showScreen('setup')" title="APIキー設定">⚙</div>
+      <div class="btn-icon" onclick="goRitual()" title="朝の儀式">✦</div>
+      <div class="btn-icon" onclick="showScreen('setup')" title="設定">⚙</div>
     </div>
   </div>
 
@@ -581,36 +621,24 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
         <div class="fcd-lbl" id="fLbl">集中中</div>
       </div>
     </div>
-    <div class="focus-actions" id="fActions">
-      <!-- populated by JS -->
-    </div>
+    <div class="focus-actions" id="fActions"></div>
   </div>
 </div>
 
-
 <div class="foot-logo"><img src="./一念無想.png" alt="一念無想"></div>
+<div class="toast" id="toast"></div>
 </div>
-<script>
 
-// ── API KEY ──
-function getKey(){ return localStorage.getItem('lb-api-key')||''; }
-function saveKey(){
-  const k=$('keyInput').value.trim();
-  if(!k.startsWith('sk-ant-')){
-    $('keyError').classList.add('show');return;
-  }
-  $('keyError').classList.remove('show');
-  localStorage.setItem('lb-api-key',k);
-  initRitual();showScreen('ritual');loadTasks();
-}
-$('keyInput').addEventListener('input',()=>{
-  $('btnSaveKey').disabled=$('keyInput').value.trim().length<10;
-});
+<script>
+// ═══════════════════════════════════════════════════
+// LONGBRIDGE Schedule Manager v12
+// ═══════════════════════════════════════════════════
 
 const PC={
-  'POSSIBLE COFFEE':'#b8720e','POSSIBLECOFFEE':'#b8720e','POSSIBLECOFFE':'#b8720e',
+  'POSSIBLE COFFEE':'#b8720e','POSSIBLECOFFEE':'#b8720e',
   '石高プロジェクト':'#5a8a4a','ZEN大学':'#3a6a9a','PwC研修':'#7a5aaa',
   '道の駅・地域':'#3a8a7a','農人巡旅':'#9a5a3a',
+  'その他・地域':'#3a8a7a','バックオフィス':'#6a6a7a','その他・生活':'#8a7a6a',
 };
 const DC='#909088';
 function pc(p){return PC[p]||DC;}
@@ -620,22 +648,71 @@ const DAYSF=['日曜','月曜','火曜','水曜','木曜','金曜','土曜'];
 function toM(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
 function pad(n){return String(n).padStart(2,'0');}
 function isCafe(d){return [4,5,6].includes(d);}
+function fmt(m){return `${pad(Math.floor(m/60))}:${pad(m%60)}`;}
 
-// ── state ──
+// ── Settings ──
+function getGasUrl(){ return localStorage.getItem('lb-gas-url')||''; }
+function getKey(){ return localStorage.getItem('lb-api-key')||''; }
+function getToken(){ return localStorage.getItem('lb-gas-token')||'lb-2026'; }
+
+function saveSettings(){
+  const gas=$('gasInput').value.trim();
+  const key=$('keyInput').value.trim();
+  const tok=$('tokenInput').value.trim()||'lb-2026';
+  if(!gas.startsWith('https://script.google.com/')){
+    $('gasErr').classList.add('show');return;
+  }
+  $('gasErr').classList.remove('show');
+  localStorage.setItem('lb-gas-url',gas);
+  if(key) localStorage.setItem('lb-api-key',key);
+  localStorage.setItem('lb-gas-token',tok);
+  initRitual();showScreen('ritual');
+}
+
+// Enable save button when GAS URL is entered
+['gasInput','keyInput','tokenInput'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    $('btnSave').disabled=!$('gasInput').value.trim();
+  });
+});
+
+function apiHeaders(){
+  return {
+    'Content-Type':'application/json',
+    'x-api-key':getKey(),
+    'anthropic-version':'2023-06-01',
+    'anthropic-dangerous-direct-browser-access':'true'
+  };
+}
+
+// ── Toast ──
+function toast(msg, dur=2500){
+  const t=$('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ── State ──
 let schedule=[], rawTasks=[], selIdx=[], focusIdx=-1;
-let fTimer=null, fSecsLeft=0, fTotalSecs=0;
-let fPhase='work'; // 'work' | 'break' | 'choice'
+let fTimer=null, fSecsLeft=0, fTotalSecs=0, fStartedAt=0;
+let fPhase='work';
 let notified=new Set(), clockIv=null;
 
-// ── helpers ──
+// ── Screen Nav ──
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');
+  // Pre-fill settings if returning to setup
+  if(id==='setup'){
+    $('gasInput').value=getGasUrl();
+    $('keyInput').value=getKey();
+    $('tokenInput').value=getToken();
+    $('btnSave').disabled=!$('gasInput').value.trim();
+  }
 }
 function goRitual(){showScreen('ritual');}
 function exitFocus(){clearFT();showScreen('tl-screen');}
 
-// ── clock ──
+// ── Clock ──
 function startClock(){updateClock();clockIv=setInterval(updateClock,15000);}
 function updateClock(){
   const n=new Date();
@@ -644,9 +721,13 @@ function updateClock(){
   updateNowLine();
   updateNowNext();
   checkBreak();
+  updateProg();
 }
 
-// ── ritual init ──
+// ══════════════════════════
+// RITUAL
+// ══════════════════════════
+
 function initRitual(){
   const n=new Date(),d=n.getDay(),dt=n.getDate(),cafe=isCafe(d);
   $('rSub').textContent=`${n.getFullYear()}.${pad(n.getMonth()+1)}.${pad(dt)} — ${DAYSF[d]}`;
@@ -655,37 +736,49 @@ function initRitual(){
   const ce=$('dCafe');
   ce.textContent=cafe?'カフェ営業日 13:00 open':'非営業日 — 作業日';
   ce.className='dc'+(cafe?' cafe':'');
+  selIdx=[];rawTasks=[];
   setTimeout(()=>$('rs1').classList.add('in'),80);
   setTimeout(()=>{$('rs2').classList.add('in');loadTasks();},350);
   setTimeout(()=>$('rs3').classList.add('in'),600);
 }
 
-// ── load tasks ──
+// ── Load tasks from GAS ──
 async function loadTasks(){
   $('loadWrap').classList.add('on');
+  $('terr').classList.remove('on');
+  $('tlist').innerHTML='';
+  const url=getGasUrl();
+  if(!url){
+    showTaskError('GAS URLが未設定です。⚙から設定してください。');
+    return;
+  }
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:1000,
-        system:`GoogleスプレッドシートURLのタスクデータを取得し、未完了タスク（✓=FALSE）をJSONで返す。
-URL: https://docs.google.com/spreadsheets/d/1kLQWjkSSx3rC1fXVI5lUBZ63JYY-gs3fLoetjQ8cCPg/edit#gid=832966323
-列構成：✓|期限|プロジェクト|タスク|優先度|時間(分)|メモ|TaskID
-JSONのみ返す（説明文不要）：
-{"tasks":[{"project":"","task":"","priority":"高/中/低","deadline":"MM/DD or null","duration":60}]}
-優先度高を先に、最大15件。時間(分)列が空なら duration=60。`,
-        messages:[{role:'user',content:'取得してください'}]
-      })
-    });
+    const apiUrl=url+(url.includes('?')?'&':'?')+'mode=api';
+    const r=await fetch(apiUrl,{redirect:'follow'});
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
     const d=await r.json();
-    const raw=d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
-    rawTasks=JSON.parse(raw).tasks||[];
+    if(!d.ok) throw new Error(d.error||'GASエラー');
+    rawTasks=d.tasks||[];
+    if(!rawTasks.length){
+      showTaskError('未完了タスクがありません。下の欄に手動入力してください。');
+      return;
+    }
     renderTaskList();
   }catch(e){
-    $('loadWrap').classList.remove('on');
-    $('terr').classList.add('on');
-    enableGo();
+    console.error('loadTasks error:',e);
+    if(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')){
+      showTaskError('ネットワークエラー。GAS URLが正しいか確認してください。<br><a href="javascript:loadTasks()">再試行</a>');
+    } else {
+      showTaskError(`読み込みエラー: ${e.message}<br>下の欄に手動入力してください。<br><a href="javascript:loadTasks()">再試行</a>`);
+    }
   }
+}
+
+function showTaskError(msg){
+  $('loadWrap').classList.remove('on');
+  $('terr').innerHTML=msg;
+  $('terr').classList.add('on');
+  enableGo();
 }
 
 function renderTaskList(){
@@ -695,20 +788,45 @@ function renderTaskList(){
     const c=pc(t.project);
     const div=document.createElement('div');
     div.className='ti';div.dataset.i=i;
+    const isOverdue=t.deadline&&isDeadlinePast(t.deadline);
     div.innerHTML=`
       <div class="tichk"><span class="tichk-i">✓</span></div>
       <div class="tiinfo">
-        <div class="tiproj" style="color:${c}">${t.project}</div>
-        <div class="tiname">${t.task}</div>
-        ${t.deadline?`<div class="timeta">期限 ${t.deadline}</div>`:''}
+        <div class="tiproj" style="color:${c}">${esc(t.project)}</div>
+        <div class="tiname">${esc(t.task)}</div>
+        ${t.deadline?`<div class="timeta${isOverdue?' overdue':''}">${isOverdue?'⚠ ':''}期限 ${esc(t.deadline)}</div>`:''}
       </div>
-      <div class="tidur">${t.duration}m</div>`;
-    div.onclick=()=>toggleSel(i,div);
+      <div class="tidur" data-i="${i}" onclick="cycleDur(event,${i})">${t.duration}m</div>`;
+    div.onclick=(e)=>{if(!e.target.closest('.tidur'))toggleSel(i,div);};
     l.appendChild(div);
   });
+  // 優先度「高」を自動選択
   rawTasks.forEach((t,i)=>{if(t.priority==='高')toggleSel(i,l.children[i]);});
   enableGo();
 }
+
+// タップで時間をサイクル: 30→60→90→120→30...
+const DUR_OPTIONS=[30,60,90,120];
+function cycleDur(e,i){
+  e.stopPropagation();
+  const cur=rawTasks[i].duration;
+  const idx=DUR_OPTIONS.indexOf(cur);
+  rawTasks[i].duration=DUR_OPTIONS[(idx+1)%DUR_OPTIONS.length];
+  e.target.textContent=rawTasks[i].duration+'m';
+}
+
+function isDeadlinePast(dl){
+  // dl is "M/D" format
+  const parts=dl.split('/');
+  if(parts.length!==2)return false;
+  const n=new Date();
+  const m=parseInt(parts[0]),d=parseInt(parts[1]);
+  const target=new Date(n.getFullYear(),m-1,d);
+  const today=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+  return target<today;
+}
+
+function esc(s){return s?String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;'):'';}
 
 function toggleSel(i,el){
   const x=selIdx.indexOf(i);
@@ -722,59 +840,133 @@ function enableGo(){
 }
 $('manIn').addEventListener('input',enableGo);
 
-// ── start day ──
-async function startDay(){
+// ══════════════════════════
+// SCHEDULE GENERATION (Pure JS)
+// ══════════════════════════
+
+function generateSchedule(tasks, startMinute, cafeDay){
+  const blocks=[];
+  let cursor=startMinute;
+  
+  // 25分作業 + 5分休憩のリズムでタスクを配置
+  for(const t of tasks){
+    let remaining=t.duration||60;
+    let isFirst=true;
+    
+    while(remaining>0){
+      // カフェ日の固定ブロック挿入チェック
+      if(cafeDay){
+        if(cursor<720&&cursor+Math.min(remaining,25)>720){
+          // 12:00前に終わらないなら先に休憩を入れて12:00に合わせる
+          if(cursor<720){
+            blocks.push({time:fmt(cursor),type:'break',task:'小休憩',duration:720-cursor,done:false});
+            cursor=720;
+          }
+        }
+        if(cursor===720){
+          blocks.push({time:'12:00',type:'cafe',project:'POSSIBLE COFFEE',task:'カフェ準備',duration:60,done:false});
+          blocks.push({time:'13:00',type:'cafe',project:'POSSIBLE COFFEE',task:'カフェ営業',duration:240,done:false});
+          return blocks; // カフェ営業後はスケジュール終了
+        }
+      } else {
+        // 非カフェ日: 12:00前後に昼食
+        if(cursor<720&&cursor+Math.min(remaining,25)>720){
+          if(cursor<720){
+            const gap=720-cursor;
+            if(gap>=10){
+              // 残り時間があれば作業
+              const chunk=Math.min(remaining,gap);
+              blocks.push({time:fmt(cursor),type:'work',project:t.project,task:t.task,duration:chunk,done:false,row:t.row});
+              remaining-=chunk;
+              cursor+=chunk;
+            }
+          }
+          blocks.push({time:fmt(cursor),type:'meal',task:'昼食',duration:30,done:false});
+          cursor+=30;
+          if(remaining<=0)break;
+          continue;
+        }
+      }
+      
+      // 作業ブロック（最大25分）
+      const chunk=Math.min(remaining,25);
+      blocks.push({
+        time:fmt(cursor),
+        type:'work',
+        project:t.project,
+        task:t.task,
+        duration:chunk,
+        done:false,
+        row:t.row // スプレッドシートの行番号（書き戻し用）
+      });
+      remaining-=chunk;
+      cursor+=chunk;
+      
+      // 25分作業後に5分休憩（まだタスクが残っている or 次のタスクがある場合）
+      if(remaining>0 || tasks.indexOf(t)<tasks.length-1){
+        blocks.push({time:fmt(cursor),type:'break',task:'小休憩',duration:5,done:false});
+        cursor+=5;
+      }
+    }
+  }
+  
+  // 非カフェ日で昼食がまだ入っていない場合
+  if(!cafeDay && !blocks.some(b=>b.type==='meal') && cursor>720){
+    // 12:00付近に昼食を挿入（既にスケジュールが12時を超えている場合はスキップ）
+  }
+  
+  return blocks;
+}
+
+// ── Start Day ──
+function startDay(){
   $('btnGo').disabled=true;
   $('btnGo').innerHTML='<span>生成中...</span>';
+  
   const tasks=selIdx.map(i=>rawTasks[i]);
   const manual=$('manIn').value.trim();
-  const n=new Date(),cafe=isCafe(n.getDay()),day=DAYSF[n.getDay()];
-  const taskStr=tasks.map(t=>`${t.project},${t.task},${t.priority},${t.duration||60}`).join('\n')
-    +(manual?'\n'+manual:'');
-  try{
-    schedule=await callSchedAPI(taskStr,cafe,day,'07:00');
-    await saveSched();
-    showScreen('tl-screen');
-    renderTL();startClock();setTimeout(scrollToNow,400);
-  }catch(e){
+  
+  // 手動入力をパース
+  if(manual){
+    manual.split('\n').forEach(line=>{
+      const parts=line.split(',').map(s=>s.trim());
+      if(parts.length>=2){
+        tasks.push({
+          project:parts[0]||'',
+          task:parts[1]||'',
+          priority:parts[2]||'中',
+          duration:parseInt(parts[3])||60,
+          row:null // 手動入力には行番号なし
+        });
+      }
+    });
+  }
+  
+  if(!tasks.length){
     $('btnGo').disabled=false;
     $('btnGo').innerHTML='<span>今日をはじめる</span><span>→</span>';
+    return;
   }
+  
+  const n=new Date();
+  const startMin=Math.max(n.getHours()*60+Math.ceil(n.getMinutes()/5)*5, 7*60); // 最低07:00
+  const cafe=isCafe(n.getDay());
+  
+  schedule=generateSchedule(tasks,startMin,cafe);
+  saveSched();
+  showScreen('tl-screen');
+  renderTL();startClock();
+  setTimeout(scrollToNow,400);
+  toast('スケジュールを生成しました');
+  
+  $('btnGo').disabled=false;
+  $('btnGo').innerHTML='<span>今日をはじめる</span><span>→</span>';
 }
 
-// ── API ──
-async function callSchedAPI(taskStr,cafe,day,startTime){
-  const r=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',max_tokens:1000,
-      system:`LONGBRIDGEのスケジューラー。今日は${day}。${cafe?'カフェ営業日（木金土）。12:00開店準備、13:00カフェ営業。':'非営業日。午後も作業可能。'}
+// ══════════════════════════
+// TIMELINE
+// ══════════════════════════
 
-${startTime}からスケジュールを生成。
-
-ルール：
-- タスクは指定された時間(分)でブロックを作る。指定なければ60分。
-- タスクの内容は一切変えない・分解しない。タスク名をそのまま使う。
-- 25分作業ブロック→5分休憩ブロックのリズムを基本とする。
-  ただしタスクの時間が25分を超える場合は、タスクを連続ブロックとして並べ、25分ごとに小休憩を挟む。
-  例：60分タスク → 07:00 作業①(25分) → 07:25 小休憩(5分) → 07:30 作業②(30分)
-- 昼食ブロックを12:00前後に入れる（30分）
-- カフェ日は12:00に「カフェ準備」、13:00に「カフェ営業」ブロックを入れる
-- typeはwork/break/meal/cafeのいずれか
-- breakとmeal以外はprojectを必ず入れる
-- doneは常にfalse
-
-JSONのみ返す：
-{"blocks":[{"time":"07:00","type":"work","project":"","task":"","duration":25,"done":false}]}`,
-      messages:[{role:'user',content:`タスク（プロジェクト,タスク名,優先度,時間分）：\n${taskStr}`}]
-    })
-  });
-  const d=await r.json();
-  const raw=d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
-  return JSON.parse(raw).blocks||[];
-}
-
-// ── render timeline ──
 function renderTL(){
   const con=$('tlBlocks');con.innerHTML='';
   schedule.forEach((b,i)=>{
@@ -788,11 +980,11 @@ function renderTL(){
       <div class="tb-t"><span>${b.time}</span></div>
       ${(!isB&&!isC)?`<div class="tb-bar" style="background:${c}"></div>`:'<div style="width:3px;flex-shrink:0"></div>'}
       <div class="tb-body">
-        ${b.project?`<div class="tb-proj" style="color:${c}">${b.project}</div>`:''}
-        <div class="tb-name">${b.task}</div>
+        ${b.project?`<div class="tb-proj" style="color:${c}">${esc(b.project)}</div>`:''}
+        <div class="tb-name">${esc(b.task)}</div>
         ${(!isB&&!isC&&b.duration)?`<div class="tb-dur">${b.duration}分</div>`:''}
       </div>
-      <div class="tb-done"><div class="dc"><span class="dci">✓</span></div></div>`;
+      <div class="tb-done"><div class="dc-circle"><span class="dci">✓</span></div></div>`;
     if(!isB&&!isC) el.onclick=()=>tapBlock(i,el);
     con.appendChild(el);
   });
@@ -808,7 +1000,7 @@ function tapBlock(i,el){
   openFocus(i);
 }
 
-// ── now line ──
+// ── Now Line ──
 function updateNowLine(){
   const line=$('nowLine'),n=new Date();
   const nm=n.getHours()*60+n.getMinutes();
@@ -837,8 +1029,6 @@ function updateNowLine(){
 // ── NOW/NEXT card ──
 function updateNowNext(){
   const n=new Date(),nm=n.getHours()*60+n.getMinutes();
-  const work=schedule.filter(b=>b.type==='work'&&!b.done);
-  // current
   let cur=null,nxt=null;
   for(let i=0;i<schedule.length;i++){
     const b=schedule[i];
@@ -851,26 +1041,21 @@ function updateNowNext(){
   if(!cur&&!nxt){$('nowNext').classList.remove('show');return;}
   $('nowNext').classList.add('show');
   if(cur){
-    const c=cur.b;
-    $('nnNowProj').textContent=c.project||'';
-    $('nnNowProj').style.color=c.project?pc(c.project):DC;
-    $('nnNowTask').textContent=c.task;
-    // remaining in block
-    const bm=toM(c.time);
-    const dur=c.duration||25;
+    $('nnNowProj').textContent=cur.b.project||'';
+    $('nnNowProj').style.color=cur.b.project?pc(cur.b.project):DC;
+    $('nnNowTask').textContent=cur.b.task;
+    const bm=toM(cur.b.time),dur=cur.b.duration||25;
     const rem=Math.max(0,(bm+dur)-nm);
     $('nnTimer').textContent=rem>0?`${rem}分`:'—';
   } else {
-    $('nnNowTask').textContent='—';$('nnTimer').textContent='—';
-    $('nnNowProj').textContent='';
+    $('nnNowTask').textContent='—';$('nnTimer').textContent='—';$('nnNowProj').textContent='';
   }
   if(nxt){
     $('nnNextProj').textContent=nxt.b.project||'';
     $('nnNextProj').style.color=nxt.b.project?pc(nxt.b.project):DC;
     $('nnNextTask').textContent=nxt.b.task;
   } else {
-    $('nnNextTask').textContent='以降の作業はありません';
-    $('nnNextProj').textContent='';
+    $('nnNextTask').textContent='以降の作業はありません';$('nnNextProj').textContent='';
   }
 }
 
@@ -879,7 +1064,7 @@ function scrollToNow(){
   if(c) c.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-// ── progress ──
+// ── Progress ──
 function updateProg(){
   const work=schedule.filter(b=>b.type==='work');
   const done=work.filter(b=>b.done);
@@ -888,7 +1073,7 @@ function updateProg(){
   $('progPct').textContent=pct+'%';
 }
 
-// ── break banner ──
+// ── Break Banner ──
 function checkBreak(){
   const n=new Date(),nm=n.getHours()*60+n.getMinutes();
   schedule.forEach((b,i)=>{
@@ -902,13 +1087,17 @@ function checkBreak(){
   });
 }
 
-// ── FOCUS ──
+// ══════════════════════════
+// FOCUS MODE
+// ══════════════════════════
+
 function openFocus(i){
   focusIdx=i;
   const b=schedule[i];
   fPhase='work';
   fTotalSecs=(b.duration||25)*60;
   fSecsLeft=fTotalSecs;
+  fStartedAt=Date.now(); // バックグラウンド補正用
   $('fProj').textContent=b.project||'';
   $('fProj').style.color=b.project?pc(b.project):DC;
   $('fTask').textContent=b.task;
@@ -920,31 +1109,21 @@ function openFocus(i){
 function setFocusPhaseUI(){
   const isWork=fPhase==='work';
   const isBrk=fPhase==='break';
-  const isChoice=fPhase==='choice';
-
-  // phase tag
   const tag=$('fPhaseTag');
   if(isWork){tag.textContent='集中';tag.className='focus-phase-tag work';}
   else if(isBrk){tag.textContent='小休憩';tag.className='focus-phase-tag brk';}
   else{tag.textContent='休憩終了';tag.className='focus-phase-tag brk';}
-
-  // ring color
   $('fRing').className='fring '+(isWork?'work':'brk');
   $('fArc').style.stroke=isWork?'#b8720e':'#3a6a9a';
-
-  // label
   $('fLbl').textContent=isWork?'集中中':isBrk?'休憩中':'選択してください';
-
-  // actions
   const fa=$('fActions');fa.innerHTML='';
   if(isWork){
     fa.innerHTML=`
       <button class="fbtn" onclick="skipBreak()">スキップ → 完了</button>
-      <button class="fbtn primary" onclick="()=>{}">集中中</button>`;
+      <button class="fbtn primary" style="pointer-events:none">集中中</button>`;
   } else if(isBrk){
     fa.innerHTML=`<button class="fbtn blue" style="pointer-events:none">休憩中...</button>`;
   } else {
-    // choice
     fa.innerHTML=`
       <button class="fbtn" onclick="continueTask()">継続する</button>
       <button class="fbtn primary" onclick="completeTask()">完了して次へ →</button>`;
@@ -955,16 +1134,30 @@ function setFocusPhaseUI(){
 
 function startFT(){
   clearFT();
+  fStartedAt=Date.now();
+  const targetEnd=fStartedAt+fSecsLeft*1000;
   fTimer=setInterval(()=>{
-    if(fSecsLeft>0){
-      fSecsLeft--;
-      updateFRing();
-      if(fPhase==='work'&&fSecsLeft===0) endWorkPhase();
-      if(fPhase==='break'&&fSecsLeft===0) endBreakPhase();
+    // バックグラウンド復帰時も正確な残り時間を計算
+    const now=Date.now();
+    fSecsLeft=Math.max(0,Math.round((targetEnd-now)/1000));
+    updateFRing();
+    if(fSecsLeft===0){
+      if(fPhase==='work') endWorkPhase();
+      else if(fPhase==='break') endBreakPhase();
     }
   },1000);
 }
 function clearFT(){if(fTimer){clearInterval(fTimer);fTimer=null;}}
+
+// バックグラウンド復帰時の補正
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden && fTimer){
+    // タイマーが動いている時にフォアグラウンドに戻ったら即座に更新
+    // startFTで設定したtargetEndベースなので、自動的に正確
+  }
+  // クロックも更新
+  if(!document.hidden && clockIv) updateClock();
+});
 
 function updateFRing(){
   const m=Math.floor(fSecsLeft/60),s=fSecsLeft%60;
@@ -995,7 +1188,6 @@ function skipBreak(){
 }
 
 function continueTask(){
-  // restart work timer for same task
   fPhase='work';
   fTotalSecs=(schedule[focusIdx]?.duration||25)*60;
   fSecsLeft=fTotalSecs;
@@ -1004,57 +1196,151 @@ function continueTask(){
   startFT();
 }
 
-function completeTask(){
+async function completeTask(){
   clearFT();
   if(focusIdx>=0){
     schedule[focusIdx].done=true;
     saveSched();
+    // スプレッドシートに書き戻し
+    const row=schedule[focusIdx].row;
+    if(row) writeBack([row]);
   }
   renderTL();updateNowNext();
   showScreen('tl-screen');
   scrollToNow();
+  toast('タスク完了 ✓');
 }
 
-// ── regen ──
+// ── Write back to spreadsheet ──
+async function writeBack(rows){
+  const url=getGasUrl();
+  const token=getToken();
+  if(!url||!rows.length) return;
+  try{
+    await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'complete',token,rows}),
+      mode:'no-cors' // GAS CORS workaround — request executes but response is opaque
+    });
+  }catch(e){
+    console.error('writeBack error:',e);
+    // サイレントフェイル — 次回のloadで状態は同期される
+  }
+}
+
+// ── Regen with Claude API (optional) ──
 async function regenSchedule(){
+  const key=getKey();
   const btn=$('btnRegen');
-  btn.classList.add('busy');
-  $('regenIco').textContent='⟳';$('regenTxt').textContent='再スケジュール中...';btn.disabled=true;
+  
   const n=new Date(),nm=n.getHours()*60+n.getMinutes();
   const rem=schedule.filter(b=>!b.done&&b.type==='work'&&toM(b.time)>=nm);
-  if(!rem.length){btn.classList.remove('busy');btn.disabled=false;return;}
-  const hh=pad(n.getHours()),mm=pad(Math.min(Math.ceil(n.getMinutes()/5)*5,55));
-  const st=`${hh}:${mm}`;
+  if(!rem.length){toast('残りタスクがありません');return;}
+  
+  if(!key){
+    // APIキーなし → JSで再生成
+    btn.classList.add('busy');
+    $('regenIco').textContent='⟳';$('regenTxt').textContent='再スケジュール中...';btn.disabled=true;
+    
+    const startMin=Math.ceil(nm/5)*5;
+    const cafe=isCafe(n.getDay());
+    const newBlocks=generateSchedule(rem.map(b=>({
+      project:b.project,task:b.task,duration:b.duration||25,row:b.row
+    })),startMin,cafe);
+    
+    const done=schedule.filter(b=>b.done||toM(b.time)<nm);
+    schedule=[...done,...newBlocks].sort((a,b)=>toM(a.time)-toM(b.time));
+    saveSched();renderTL();scrollToNow();
+    
+    btn.classList.remove('busy');btn.disabled=false;
+    $('regenIco').textContent='↺';$('regenTxt').textContent='残りを再スケジュール';
+    toast('再スケジュールしました');
+    return;
+  }
+  
+  // APIキーあり → Claude APIで再生成
+  btn.classList.add('busy');
+  $('regenIco').textContent='⟳';$('regenTxt').textContent='AI再スケジュール中...';btn.disabled=true;
+  
+  const startTime=fmt(Math.ceil(nm/5)*5);
+  const cafe=isCafe(n.getDay());
+  const day=DAYSF[n.getDay()];
   const ts=rem.map(b=>`${b.project},${b.task},高,${b.duration||25}`).join('\n');
+  
   try{
-    const nb=await callSchedAPI(ts,isCafe(n.getDay()),DAYSF[n.getDay()],st);
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:apiHeaders(),
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`LONGBRIDGEのスケジューラー。今日は${day}。${cafe?'カフェ営業日。12:00開店準備、13:00カフェ営業。':'非営業日。午後も作業可能。'}
+${startTime}から残りタスクを再配置。
+ルール：タスク名は一切変えない。25分作業+5分休憩リズム。昼食30分。
+JSONのみ返す（説明文・マークダウン不要）：
+{"blocks":[{"time":"HH:MM","type":"work","project":"","task":"","duration":25,"done":false}]}`,
+        messages:[{role:'user',content:`残りタスク:\n${ts}`}]
+      })
+    });
+    
+    if(!r.ok){
+      const errData=await r.json().catch(()=>({}));
+      if(r.status===401) throw new Error('APIキーが無効です');
+      if(r.status===429) throw new Error('レート制限中。少し待ってください');
+      throw new Error(errData.error?.message||`APIエラー (${r.status})`);
+    }
+    
+    const d=await r.json();
+    const raw=d.content.map(c=>c.text||'').join('');
+    
+    // JSONを安全にパース
+    let parsed;
+    try{
+      const cleaned=raw.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+      // JSON部分だけ抽出（前後に余計なテキストがある場合）
+      const jsonMatch=cleaned.match(/\{[\s\S]*\}/);
+      if(!jsonMatch) throw new Error('JSONが見つかりません');
+      parsed=JSON.parse(jsonMatch[0]);
+    }catch(pe){
+      throw new Error('AIの応答を解析できませんでした');
+    }
+    
+    const nb=parsed.blocks||[];
+    if(!nb.length) throw new Error('ブロックが空です');
+    
     const done=schedule.filter(b=>b.done||toM(b.time)<nm);
     schedule=[...done,...nb].sort((a,b)=>toM(a.time)-toM(b.time));
-    await saveSched();renderTL();scrollToNow();
-  }catch(e){}
+    saveSched();renderTL();scrollToNow();
+    toast('AI再スケジュール完了');
+  }catch(e){
+    console.error('regenSchedule error:',e);
+    toast(e.message||'再スケジュールに失敗しました',3500);
+  }
+  
   btn.classList.remove('busy');btn.disabled=false;
   $('regenIco').textContent='↺';$('regenTxt').textContent='残りを再スケジュール';
 }
 
-// ── storage ──
-async function saveSched(){
-  try{await window.storage.set('lb-v4',JSON.stringify({date:new Date().toDateString(),blocks:schedule}));}catch(e){}
+// ── Storage ──
+function saveSched(){
+  try{localStorage.setItem('lb-v5',JSON.stringify({date:new Date().toDateString(),blocks:schedule}));}catch(e){}
 }
-async function loadSched(){
+function loadSched(){
   try{
-    const r=await window.storage.get('lb-v4');if(!r)return false;
-    const s=JSON.parse(r.value);
+    const raw=localStorage.getItem('lb-v5');if(!raw)return false;
+    const s=JSON.parse(raw);
     if(s.date===new Date().toDateString()&&s.blocks?.length){schedule=s.blocks;return true;}
   }catch(e){}
   return false;
 }
 
-// ── boot ──
-async function boot(){
-  if(!getKey()){showScreen('setup');return;}
-  initRitual();showScreen('ritual');
-  if(await loadSched()){showScreen('tl-screen');renderTL();startClock();setTimeout(scrollToNow,500);}
-  else loadTasks();
+// ── Boot ──
+function boot(){
+  if(!getGasUrl()){showScreen('setup');return;}
+  if(loadSched()){
+    showScreen('tl-screen');renderTL();startClock();setTimeout(scrollToNow,500);
+  } else {
+    initRitual();showScreen('ritual');
+  }
 }
 boot();
 </script>
