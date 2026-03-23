@@ -374,10 +374,91 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   background:linear-gradient(to top,rgba(248,246,242,0.94) 50%,transparent);
 }
 .foot-logo img{height:14px;width:auto;opacity:0.22;filter:grayscale(100%);}
+
+/* ── API KEY SETUP ── */
+#setup{background:var(--bg);}
+.setup-inner{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 32px;text-align:center;
+}
+.setup-logo{margin-bottom:32px;}
+.setup-logo img{height:40px;width:auto;opacity:0.9;}
+.setup-title{
+  font-family:var(--serif);font-size:22px;
+  color:var(--text);line-height:1.4;margin-bottom:8px;
+}
+.setup-sub{
+  font-size:12px;color:var(--text3);font-family:var(--mono);
+  line-height:1.7;margin-bottom:28px;
+}
+.setup-sub a{color:var(--amber);text-decoration:none;}
+.key-input-wrap{
+  width:100%;background:var(--bg3);
+  border:0.5px solid var(--line2);border-radius:12px;
+  overflow:hidden;margin-bottom:12px;
+}
+.key-input{
+  width:100%;padding:14px 16px;
+  border:none;outline:none;
+  font-family:var(--mono);font-size:13px;
+  color:var(--text);background:transparent;
+  letter-spacing:0.02em;
+}
+.key-input::placeholder{color:var(--text3);}
+.key-error{
+  font-size:11px;font-family:var(--mono);
+  color:var(--red);margin-bottom:12px;display:none;
+}
+.key-error.show{display:block;}
+.btn-save-key{
+  width:100%;padding:14px;
+  background:var(--amber);border:none;border-radius:12px;
+  font-family:var(--serif);font-size:17px;color:#fff8ee;
+  cursor:pointer;transition:opacity .15s;
+}
+.btn-save-key:active{opacity:.85;}
+.btn-save-key:disabled{opacity:.4;}
+.setup-note{
+  margin-top:20px;font-size:11px;
+  color:var(--text3);font-family:var(--mono);line-height:1.6;
+}
+/* settings gear in tl-header */
+.btn-settings{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--bg2);border:0.5px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;color:var(--text2);
+}
 </style>
 </head>
 <body>
 <div class="app">
+
+<!-- ══ SETUP ══ -->
+<div class="screen" id="setup">
+  <div class="setup-inner">
+    <div class="setup-logo"><img src="./一念無想.png" alt="一念無想"></div>
+    <div class="setup-title">APIキーを設定してください</div>
+    <div class="setup-sub">
+      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> で<br>
+      APIキーを作成してここに貼り付けてください。<br>
+      キーはこのデバイスにのみ保存されます。
+    </div>
+    <div class="key-input-wrap">
+      <input class="key-input" id="keyInput" type="password"
+        placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+    </div>
+    <div class="key-error" id="keyError">キーが正しくありません（sk-ant- で始まる必要があります）</div>
+    <button class="btn-save-key" id="btnSaveKey" onclick="saveKey()" disabled>
+      保存してはじめる
+    </button>
+    <div class="setup-note">
+      キーはブラウザのローカルストレージに保存されます。<br>
+      他の人と共有するデバイスでは使用しないでください。
+    </div>
+  </div>
+</div>
 
 <!-- ══ RITUAL ══ -->
 <div class="screen" id="ritual">
@@ -442,6 +523,7 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
         <div class="prog-pct" id="progPct">0%</div>
       </div>
       <div class="btn-ritual" onclick="goRitual()">✦</div>
+      <div class="btn-settings" onclick="showScreen('setup')" title="APIキー設定">⚙</div>
     </div>
   </div>
 
@@ -509,6 +591,22 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 <div class="foot-logo"><img src="./一念無想.png" alt="一念無想"></div>
 </div>
 <script>
+
+// ── API KEY ──
+function getKey(){ return localStorage.getItem('lb-api-key')||''; }
+function saveKey(){
+  const k=$('keyInput').value.trim();
+  if(!k.startsWith('sk-ant-')){
+    $('keyError').classList.add('show');return;
+  }
+  $('keyError').classList.remove('show');
+  localStorage.setItem('lb-api-key',k);
+  initRitual();showScreen('ritual');loadTasks();
+}
+$('keyInput').addEventListener('input',()=>{
+  $('btnSaveKey').disabled=$('keyInput').value.trim().length<10;
+});
+
 const PC={
   'POSSIBLE COFFEE':'#b8720e','POSSIBLECOFFEE':'#b8720e','POSSIBLECOFFE':'#b8720e',
   '石高プロジェクト':'#5a8a4a','ZEN大学':'#3a6a9a','PwC研修':'#7a5aaa',
@@ -567,7 +665,7 @@ async function loadTasks(){
   $('loadWrap').classList.add('on');
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
+      method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',max_tokens:1000,
         system:`GoogleスプレッドシートURLのタスクデータを取得し、未完了タスク（✓=FALSE）をJSONで返す。
@@ -647,7 +745,7 @@ async function startDay(){
 // ── API ──
 async function callSchedAPI(taskStr,cafe,day,startTime){
   const r=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',headers:{'Content-Type':'application/json'},
+    method:'POST',headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({
       model:'claude-sonnet-4-20250514',max_tokens:1000,
       system:`LONGBRIDGEのスケジューラー。今日は${day}。${cafe?'カフェ営業日（木金土）。12:00開店準備、13:00カフェ営業。':'非営業日。午後も作業可能。'}
@@ -953,8 +1051,10 @@ async function loadSched(){
 
 // ── boot ──
 async function boot(){
+  if(!getKey()){showScreen('setup');return;}
   initRitual();showScreen('ritual');
   if(await loadSched()){showScreen('tl-screen');renderTL();startClock();setTimeout(scrollToNow,500);}
+  else loadTasks();
 }
 boot();
 </script>
