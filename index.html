@@ -12,6 +12,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
 html,body{height:100%;overflow:hidden;background:#f8f6f2;}
+@media(min-width:500px){html,body{background:#e8e4de;display:flex;align-items:center;justify-content:center;}.app{height:min(100dvh,860px);border-radius:18px;box-shadow:0 8px 48px rgba(0,0,0,0.15);border:0.5px solid rgba(0,0,0,0.1);}}
 
 :root{
   --bg:#f8f6f2;
@@ -54,12 +55,10 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 ══════════════════════════ */
 #ritual{background:var(--bg);}
 
-.ritual-top{padding:44px 28px 0;flex-shrink:0;}
-.ritual-greeting{
-  font-family:var(--serif);font-size:34px;
-  color:var(--text);line-height:1.2;margin-bottom:6px;
-}
-.ritual-greeting em{color:var(--amber);font-style:normal;}
+.ritual-top{padding:28px 28px 0;flex-shrink:0;}
+.ritual-logo-wrap{margin-bottom:12px;text-align:center;}
+.ritual-logo-img{height:56px;width:auto;opacity:0.92;}
+
 .ritual-sub{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:0.04em;}
 
 .ritual-body{flex:1;overflow-y:auto;padding:24px 28px 0;-webkit-overflow-scrolling:touch;}
@@ -81,8 +80,9 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   padding:16px 18px;display:flex;align-items:center;gap:14px;
 }
 .day-num{font-family:var(--serif);font-size:46px;color:var(--amber);line-height:1;}
+.day-txt{min-width:0;flex:1;}
 .day-txt .dn{font-size:17px;color:var(--text);font-family:var(--serif);}
-.day-txt .dc{font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:3px;}
+.day-txt .dc{font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .day-txt .dc.cafe{color:var(--amber);}
 
 .task-box{
@@ -143,7 +143,7 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 
 .ritual-foot{
   padding:14px 28px;
-  padding-bottom:calc(14px + env(safe-area-inset-bottom));
+  padding-bottom:calc(36px + env(safe-area-inset-bottom));
   flex-shrink:0;
 }
 .btn-go{
@@ -294,7 +294,7 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 /* REGEN */
 .regen-wrap{
   position:absolute;bottom:0;left:0;right:0;
-  padding:10px 18px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  padding:10px 18px;padding-bottom:calc(34px + env(safe-area-inset-bottom));
   background:linear-gradient(to top, #f8f6f2 65%, transparent);
 }
 .btn-regen{
@@ -364,6 +364,16 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 .fbtn.primary{background:var(--amber);border-color:var(--amber);color:#fff8ee;font-weight:400;}
 .fbtn.blue{background:var(--blue);border-color:var(--blue);color:#fff;}
 .fbtn:active{opacity:.8;}
+
+.foot-logo{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;justify-content:center;align-items:flex-end;
+  padding-bottom:calc(7px + env(safe-area-inset-bottom));
+  padding-top:20px;
+  pointer-events:none;z-index:100;
+  background:linear-gradient(to top,rgba(248,246,242,0.94) 50%,transparent);
+}
+.foot-logo img{height:14px;width:auto;opacity:0.22;filter:grayscale(100%);}
 </style>
 </head>
 <body>
@@ -372,7 +382,7 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 <!-- ══ RITUAL ══ -->
 <div class="screen" id="ritual">
   <div class="ritual-top">
-    <div class="ritual-greeting">おはようございます、<br><em>今日も丁寧に。</em></div>
+    <div class="ritual-logo-wrap"><img class="ritual-logo-img" src="./一念無想.png" alt="一念無想"></div>
     <div class="ritual-sub" id="rSub">— —</div>
   </div>
   <div class="ritual-body" id="rBody">
@@ -495,6 +505,8 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   </div>
 </div>
 
+
+<div class="foot-logo"><img src="./一念無想.png" alt="一念無想"></div>
 </div>
 <script>
 const PC={
@@ -529,7 +541,7 @@ function exitFocus(){clearFT();showScreen('tl-screen');}
 function startClock(){updateClock();clockIv=setInterval(updateClock,15000);}
 function updateClock(){
   const n=new Date();
-  $(('tlClock')).textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  $('tlClock').textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
   $('tlDate').textContent=`${n.getMonth()+1}月${n.getDate()}日（${DAYS[n.getDay()]}）`;
   updateNowLine();
   updateNowNext();
