@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LONGBRIDGE">
+<title>LONGBRIDGE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+html,body{height:100%;overflow:hidden;background:#f8f6f2;}
+
+:root{
+  --bg:#f8f6f2;
+  --bg2:#f0ede8;
+  --bg3:#ffffff;
+  --bg4:#ece9e3;
+  --line:rgba(0,0,0,0.08);
+  --line2:rgba(0,0,0,0.13);
+  --text:#1a1814;
+  --text2:#6b6660;
+  --text3:#a09890;
+  --amber:#b8720e;
+  --amber-bg:rgba(184,114,14,0.09);
+  --red:#c03030;
+  --green:#4a7a3a;
+  --blue:#3a6a9a;
+  --blue-bg:rgba(58,106,154,0.09);
+  --serif:'DM Serif Display',serif;
+  --mono:'DM Mono',monospace;
+}
+
+.app{
+  display:flex;flex-direction:column;
+  height:100vh;height:100dvh;
+  max-width:430px;margin:0 auto;
+  background:var(--bg);
+  position:relative;overflow:hidden;
+}
+
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s ease;
+}
+.screen.active{opacity:1;pointer-events:all;}
+
+/* ══════════════════════════
+   RITUAL
+══════════════════════════ */
+#ritual{background:var(--bg);}
+
+.ritual-top{padding:44px 28px 0;flex-shrink:0;}
+.ritual-greeting{
+  font-family:var(--serif);font-size:34px;
+  color:var(--text);line-height:1.2;margin-bottom:6px;
+}
+.ritual-greeting em{color:var(--amber);font-style:normal;}
+.ritual-sub{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:0.04em;}
+
+.ritual-body{flex:1;overflow-y:auto;padding:24px 28px 0;-webkit-overflow-scrolling:touch;}
+
+.rstep{margin-bottom:18px;opacity:0;transform:translateY(10px);transition:all 0.35s ease;}
+.rstep.in{opacity:1;transform:none;}
+.rstep-label{
+  font-size:10px;font-family:var(--mono);color:var(--text3);
+  letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px;
+}
+.rstep-label b{
+  display:inline-flex;width:15px;height:15px;align-items:center;justify-content:center;
+  background:var(--bg4);border-radius:50%;font-size:9px;color:var(--text2);
+  margin-right:5px;font-weight:400;
+}
+
+.day-card{
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:14px;
+  padding:16px 18px;display:flex;align-items:center;gap:14px;
+}
+.day-num{font-family:var(--serif);font-size:46px;color:var(--amber);line-height:1;}
+.day-txt .dn{font-size:17px;color:var(--text);font-family:var(--serif);}
+.day-txt .dc{font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:3px;}
+.day-txt .dc.cafe{color:var(--amber);}
+
+.task-box{
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:14px;overflow:hidden;
+}
+.task-box-hd{
+  padding:12px 16px 10px;border-bottom:0.5px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.task-box-hd-t{font-size:12px;color:var(--text2);font-family:var(--mono);}
+.sel-badge{
+  font-size:11px;font-family:var(--mono);color:var(--amber);
+  background:var(--amber-bg);padding:2px 8px;border-radius:20px;
+}
+.load-wrap{padding:24px;text-align:center;display:none;}
+.load-wrap.on{display:block;}
+.ldots{display:flex;justify-content:center;gap:5px;margin-bottom:8px;}
+.ld{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:ld 1.2s infinite;opacity:0.4;}
+.ld:nth-child(2){animation-delay:.2s;}.ld:nth-child(3){animation-delay:.4s;}
+@keyframes ld{0%,80%,100%{transform:scale(.8);opacity:.3}40%{transform:scale(1.1);opacity:1}}
+.load-t{font-size:12px;color:var(--text3);font-family:var(--mono);}
+.terr{padding:14px 16px;font-size:12px;color:var(--text3);font-family:var(--mono);display:none;}
+.terr.on{display:block;}
+
+.ti{
+  padding:11px 16px;border-bottom:0.5px solid var(--line);
+  display:flex;align-items:flex-start;gap:11px;cursor:pointer;transition:background .15s;
+}
+.ti:last-child{border-bottom:none;}
+.ti:active{background:var(--bg2);}
+.ti.sel{background:var(--amber-bg);}
+.tichk{
+  width:19px;height:19px;flex-shrink:0;margin-top:2px;
+  border:1px solid var(--line2);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.ti.sel .tichk{background:var(--amber);border-color:var(--amber);}
+.tichk-i{display:none;color:#fff;font-size:11px;}
+.ti.sel .tichk-i{display:block;}
+.tiinfo{flex:1;min-width:0;}
+.tiproj{font-size:10px;font-family:var(--mono);letter-spacing:.04em;margin-bottom:2px;}
+.tiname{font-size:14px;color:var(--text);line-height:1.35;}
+.timeta{font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
+.tidur{
+  flex-shrink:0;display:flex;align-items:center;
+  font-size:11px;font-family:var(--mono);color:var(--text3);
+}
+
+.manual-box{
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:14px;overflow:hidden;
+}
+.manual-box textarea{
+  width:100%;background:transparent;border:none;outline:none;
+  padding:13px 16px;font-size:13px;color:var(--text);
+  font-family:var(--mono);line-height:1.65;min-height:90px;resize:none;
+}
+.manual-box textarea::placeholder{color:var(--text3);}
+
+.ritual-foot{
+  padding:14px 28px;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom));
+  flex-shrink:0;
+}
+.btn-go{
+  width:100%;padding:15px;
+  background:var(--amber);border:none;border-radius:12px;
+  font-family:var(--serif);font-size:17px;color:#fff8ee;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .15s;
+}
+.btn-go:active{opacity:.85;}
+.btn-go:disabled{opacity:.4;}
+
+/* ══════════════════════════
+   TIMELINE
+══════════════════════════ */
+#tl-screen{background:var(--bg);}
+
+.tl-hdr{
+  background:var(--bg3);border-bottom:0.5px solid var(--line);
+  padding:12px 18px 10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tl-hdr-l{display:flex;align-items:baseline;gap:8px;}
+.tl-clock{
+  font-family:var(--serif);font-size:30px;color:var(--text);
+  line-height:1;font-variant-numeric:tabular-nums;
+}
+.tl-hdr-date{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.tl-hdr-r{display:flex;gap:8px;align-items:center;}
+.prog-ring{position:relative;width:34px;height:34px;}
+.prog-ring svg{transform:rotate(-90deg);}
+.prog-pct{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-family:var(--mono);color:var(--amber);
+}
+.btn-ritual{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--bg2);border:0.5px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;color:var(--text2);
+}
+
+/* NOW / NEXT CARD */
+.now-next{
+  background:var(--bg3);
+  border-bottom:0.5px solid var(--line);
+  flex-shrink:0;display:none;
+}
+.now-next.show{display:block;}
+.nn-row{
+  padding:10px 18px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:0.5px solid var(--line);
+}
+.nn-row:last-child{border-bottom:none;}
+.nn-tag{
+  font-size:9px;font-family:var(--mono);letter-spacing:.07em;
+  text-transform:uppercase;width:30px;flex-shrink:0;font-weight:400;
+}
+.nn-row.now .nn-tag{color:var(--amber);}
+.nn-row.next .nn-tag{color:var(--text3);}
+.nn-body{flex:1;min-width:0;}
+.nn-proj{font-size:10px;font-family:var(--mono);letter-spacing:.03em;margin-bottom:2px;}
+.nn-task{font-size:14px;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nn-row.next .nn-task{color:var(--text2);font-size:13px;}
+.nn-timer{
+  font-size:13px;font-family:var(--mono);
+  color:var(--amber);font-variant-numeric:tabular-nums;
+  flex-shrink:0;min-width:44px;text-align:right;
+}
+.nn-row.next .nn-timer{display:none;}
+
+/* BREAK BANNER */
+.brk-banner{
+  background:var(--amber);padding:10px 18px;
+  font-family:var(--mono);font-size:12px;color:#fff8ee;
+  text-align:center;cursor:pointer;flex-shrink:0;
+  display:none;letter-spacing:.02em;
+}
+.brk-banner.show{display:block;}
+
+/* SCROLL */
+.tl-scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  position:relative;padding-bottom:100px;
+}
+.now-line{
+  position:absolute;left:0;right:0;height:1px;background:var(--red);
+  pointer-events:none;z-index:20;display:none;
+}
+.now-dot{
+  position:absolute;left:10px;top:-4px;
+  width:8px;height:8px;background:var(--red);border-radius:50%;
+  border:2px solid var(--bg);
+}
+
+/* TIME BLOCK */
+.tb{
+  display:flex;align-items:stretch;min-height:54px;
+  cursor:pointer;transition:opacity .25s;
+  border-bottom:0.5px solid var(--line);
+  position:relative;
+}
+.tb:active{background:var(--bg2);}
+.tb.past{opacity:.32;}
+.tb.current{background:var(--bg2);}
+.tb.current::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:2px;background:var(--amber);
+}
+.tb.brk{min-height:36px;cursor:default;}
+.tb.brk:active{background:transparent;}
+.tb.cafe-b{min-height:42px;background:var(--bg4);cursor:default;}
+
+.tb-t{
+  width:52px;padding:0 6px 0 18px;
+  display:flex;align-items:flex-start;padding-top:13px;flex-shrink:0;
+}
+.tb-t span{font-size:11px;color:var(--text3);font-family:var(--mono);font-variant-numeric:tabular-nums;}
+.tb.current .tb-t span{color:var(--amber);}
+
+.tb-bar{width:3px;flex-shrink:0;margin:9px 0;border-radius:2px;}
+
+.tb-body{
+  flex:1;padding:11px 8px 11px 10px;
+  display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;
+}
+.tb-proj{font-size:10px;font-family:var(--mono);letter-spacing:.04em;line-height:1;}
+.tb-name{font-size:14px;color:var(--text);line-height:1.35;}
+.tb.current .tb-name{font-size:15px;}
+.tb.brk .tb-name,.tb.cafe-b .tb-name{font-size:12px;color:var(--text3);font-style:italic;}
+.tb.past .tb-name{text-decoration:line-through;text-decoration-color:var(--text3);}
+.tb-dur{font-size:11px;font-family:var(--mono);color:var(--text3);margin-top:1px;}
+
+.tb-done{width:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.dc{
+  width:22px;height:22px;border-radius:50%;
+  border:1.5px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.tb.done .dc{background:var(--green);border-color:var(--green);}
+.dci{display:none;color:#fff;font-size:10px;}
+.tb.done .dci{display:block;}
+.tb.brk .tb-done,.tb.cafe-b .tb-done{visibility:hidden;}
+
+/* REGEN */
+.regen-wrap{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:10px 18px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top, #f8f6f2 65%, transparent);
+}
+.btn-regen{
+  width:100%;padding:13px;
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:11px;
+  font-family:var(--mono);font-size:12px;color:var(--text2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;
+}
+.btn-regen:active{background:var(--bg4);}
+.btn-regen.busy{color:var(--amber);}
+
+/* ══════════════════════════
+   FOCUS
+══════════════════════════ */
+#focus-screen{background:var(--bg);}
+
+.focus-back{padding:14px 20px;flex-shrink:0;}
+.btn-back{
+  font-size:12px;font-family:var(--mono);color:var(--text3);
+  background:transparent;border:none;cursor:pointer;padding:0;
+}
+
+.focus-body{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:20px 32px 32px;text-align:center;
+}
+
+.focus-phase-tag{
+  font-size:10px;font-family:var(--mono);letter-spacing:.08em;
+  text-transform:uppercase;margin-bottom:10px;padding:3px 10px;
+  border-radius:20px;
+}
+.focus-phase-tag.work{color:var(--amber);background:var(--amber-bg);}
+.focus-phase-tag.brk{color:var(--blue);background:var(--blue-bg);}
+
+.focus-proj{font-size:11px;font-family:var(--mono);letter-spacing:.05em;margin-bottom:8px;}
+.focus-task{
+  font-family:var(--serif);font-size:24px;color:var(--text);
+  line-height:1.3;margin-bottom:36px;
+}
+
+.fring{position:relative;width:150px;height:150px;margin-bottom:36px;}
+.fring svg{transform:rotate(-90deg);}
+.fring circle.track{stroke:var(--bg4);}
+.fring circle.fill{transition:stroke-dashoffset 1s linear;}
+.fring.work circle.fill{stroke:var(--amber);}
+.fring.brk circle.fill{stroke:var(--blue);}
+.fcd{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+}
+.fcd-time{
+  font-family:var(--serif);font-size:38px;color:var(--text);
+  line-height:1;font-variant-numeric:tabular-nums;
+}
+.fcd-lbl{font-size:10px;color:var(--text3);font-family:var(--mono);letter-spacing:.04em;}
+
+/* Focus actions — 3 states */
+.focus-actions{display:flex;gap:8px;width:100%;}
+.fbtn{
+  flex:1;padding:13px 0;
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:11px;
+  font-family:var(--mono);font-size:12px;color:var(--text2);
+  cursor:pointer;transition:all .15s;letter-spacing:.02em;
+}
+.fbtn.primary{background:var(--amber);border-color:var(--amber);color:#fff8ee;font-weight:400;}
+.fbtn.blue{background:var(--blue);border-color:var(--blue);color:#fff;}
+.fbtn:active{opacity:.8;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ RITUAL ══ -->
+<div class="screen" id="ritual">
+  <div class="ritual-top">
+    <div class="ritual-greeting">おはようございます、<br><em>今日も丁寧に。</em></div>
+    <div class="ritual-sub" id="rSub">— —</div>
+  </div>
+  <div class="ritual-body" id="rBody">
+    <div class="rstep" id="rs1">
+      <div class="rstep-label"><b>1</b>今日の確認</div>
+      <div class="day-card">
+        <div class="day-num" id="dNum">—</div>
+        <div class="day-txt">
+          <div class="dn" id="dName">—</div>
+          <div class="dc" id="dCafe">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="rstep" id="rs2">
+      <div class="rstep-label"><b>2</b>今日やることを選ぶ</div>
+      <div class="task-box">
+        <div class="task-box-hd">
+          <span class="task-box-hd-t">未完了タスク</span>
+          <span class="sel-badge" id="selBadge">0件選択</span>
+        </div>
+        <div class="load-wrap on" id="loadWrap">
+          <div class="ldots"><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
+          <div class="load-t">読み込み中...</div>
+        </div>
+        <div id="tlist"></div>
+        <div class="terr" id="terr">読み込めませんでした。下の欄に手動入力してください。</div>
+      </div>
+    </div>
+    <div class="rstep" id="rs3">
+      <div class="rstep-label"><b>3</b>タスクを追加（任意）</div>
+      <div class="manual-box">
+        <textarea id="manIn" placeholder="POSSIBLE COFFEE,サブスク設計,高&#10;石高プロジェクト,報告書作成,高,120&#10;（プロジェクト,タスク名,優先度,時間(分)）"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="ritual-foot">
+    <button class="btn-go" id="btnGo" onclick="startDay()" disabled>
+      <span>今日をはじめる</span><span>→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══ TIMELINE ══ -->
+<div class="screen" id="tl-screen">
+  <div class="tl-hdr">
+    <div class="tl-hdr-l">
+      <div class="tl-clock" id="tlClock">--:--</div>
+      <div class="tl-hdr-date" id="tlDate">—</div>
+    </div>
+    <div class="tl-hdr-r">
+      <div class="prog-ring">
+        <svg width="34" height="34" viewBox="0 0 34 34">
+          <circle cx="17" cy="17" r="13" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="2.5"/>
+          <circle id="progC" cx="17" cy="17" r="13" fill="none" stroke="#b8720e" stroke-width="2.5"
+            stroke-dasharray="81.68" stroke-dashoffset="81.68" stroke-linecap="round"/>
+        </svg>
+        <div class="prog-pct" id="progPct">0%</div>
+      </div>
+      <div class="btn-ritual" onclick="goRitual()">✦</div>
+    </div>
+  </div>
+
+  <!-- NOW / NEXT -->
+  <div class="now-next" id="nowNext">
+    <div class="nn-row now">
+      <div class="nn-tag">now</div>
+      <div class="nn-body">
+        <div class="nn-proj" id="nnNowProj">—</div>
+        <div class="nn-task" id="nnNowTask">—</div>
+      </div>
+      <div class="nn-timer" id="nnTimer">—</div>
+    </div>
+    <div class="nn-row next">
+      <div class="nn-tag">next</div>
+      <div class="nn-body">
+        <div class="nn-proj" id="nnNextProj">—</div>
+        <div class="nn-task" id="nnNextTask">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="brk-banner" id="brkBanner" onclick="$('brkBanner').classList.remove('show')">
+    休憩の時間です ── タップして閉じる
+  </div>
+
+  <div class="tl-scroll" id="tlScroll">
+    <div class="now-line" id="nowLine"><div class="now-dot"></div></div>
+    <div id="tlBlocks"></div>
+    <div class="regen-wrap">
+      <button class="btn-regen" id="btnRegen" onclick="regenSchedule()">
+        <span id="regenIco">↺</span><span id="regenTxt">残りを再スケジュール</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOCUS ══ -->
+<div class="screen" id="focus-screen">
+  <div class="focus-back">
+    <button class="btn-back" onclick="exitFocus()">← 戻る</button>
+  </div>
+  <div class="focus-body">
+    <div class="focus-phase-tag work" id="fPhaseTag">集中</div>
+    <div class="focus-proj" id="fProj">—</div>
+    <div class="focus-task" id="fTask">—</div>
+    <div class="fring work" id="fRing">
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="65" fill="none" class="track" stroke-width="4"/>
+        <circle cx="75" cy="75" r="65" fill="none" class="fill" stroke-width="4"
+          stroke-dasharray="408.41" stroke-dashoffset="0" id="fArc"/>
+      </svg>
+      <div class="fcd">
+        <div class="fcd-time" id="fTime">25:00</div>
+        <div class="fcd-lbl" id="fLbl">集中中</div>
+      </div>
+    </div>
+    <div class="focus-actions" id="fActions">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+const PC={
+  'POSSIBLE COFFEE':'#b8720e','POSSIBLECOFFEE':'#b8720e','POSSIBLECOFFE':'#b8720e',
+  '石高プロジェクト':'#5a8a4a','ZEN大学':'#3a6a9a','PwC研修':'#7a5aaa',
+  '道の駅・地域':'#3a8a7a','農人巡旅':'#9a5a3a',
+};
+const DC='#909088';
+function pc(p){return PC[p]||DC;}
+const $=id=>document.getElementById(id);
+const DAYS=['日','月','火','水','木','金','土'];
+const DAYSF=['日曜','月曜','火曜','水曜','木曜','金曜','土曜'];
+function toM(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
+function pad(n){return String(n).padStart(2,'0');}
+function isCafe(d){return [4,5,6].includes(d);}
+
+// ── state ──
+let schedule=[], rawTasks=[], selIdx=[], focusIdx=-1;
+let fTimer=null, fSecsLeft=0, fTotalSecs=0;
+let fPhase='work'; // 'work' | 'break' | 'choice'
+let notified=new Set(), clockIv=null;
+
+// ── helpers ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+function goRitual(){showScreen('ritual');}
+function exitFocus(){clearFT();showScreen('tl-screen');}
+
+// ── clock ──
+function startClock(){updateClock();clockIv=setInterval(updateClock,15000);}
+function updateClock(){
+  const n=new Date();
+  $(('tlClock')).textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  $('tlDate').textContent=`${n.getMonth()+1}月${n.getDate()}日（${DAYS[n.getDay()]}）`;
+  updateNowLine();
+  updateNowNext();
+  checkBreak();
+}
+
+// ── ritual init ──
+function initRitual(){
+  const n=new Date(),d=n.getDay(),dt=n.getDate(),cafe=isCafe(d);
+  $('rSub').textContent=`${n.getFullYear()}.${pad(n.getMonth()+1)}.${pad(dt)} — ${DAYSF[d]}`;
+  $('dNum').textContent=dt;
+  $('dName').textContent=DAYSF[d];
+  const ce=$('dCafe');
+  ce.textContent=cafe?'カフェ営業日 13:00 open':'非営業日 — 作業日';
+  ce.className='dc'+(cafe?' cafe':'');
+  setTimeout(()=>$('rs1').classList.add('in'),80);
+  setTimeout(()=>{$('rs2').classList.add('in');loadTasks();},350);
+  setTimeout(()=>$('rs3').classList.add('in'),600);
+}
+
+// ── load tasks ──
+async function loadTasks(){
+  $('loadWrap').classList.add('on');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`GoogleスプレッドシートURLのタスクデータを取得し、未完了タスク（✓=FALSE）をJSONで返す。
+URL: https://docs.google.com/spreadsheets/d/1kLQWjkSSx3rC1fXVI5lUBZ63JYY-gs3fLoetjQ8cCPg/edit#gid=832966323
+列構成：✓|期限|プロジェクト|タスク|優先度|時間(分)|メモ|TaskID
+JSONのみ返す（説明文不要）：
+{"tasks":[{"project":"","task":"","priority":"高/中/低","deadline":"MM/DD or null","duration":60}]}
+優先度高を先に、最大15件。時間(分)列が空なら duration=60。`,
+        messages:[{role:'user',content:'取得してください'}]
+      })
+    });
+    const d=await r.json();
+    const raw=d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    rawTasks=JSON.parse(raw).tasks||[];
+    renderTaskList();
+  }catch(e){
+    $('loadWrap').classList.remove('on');
+    $('terr').classList.add('on');
+    enableGo();
+  }
+}
+
+function renderTaskList(){
+  $('loadWrap').classList.remove('on');
+  const l=$('tlist');l.innerHTML='';
+  rawTasks.forEach((t,i)=>{
+    const c=pc(t.project);
+    const div=document.createElement('div');
+    div.className='ti';div.dataset.i=i;
+    div.innerHTML=`
+      <div class="tichk"><span class="tichk-i">✓</span></div>
+      <div class="tiinfo">
+        <div class="tiproj" style="color:${c}">${t.project}</div>
+        <div class="tiname">${t.task}</div>
+        ${t.deadline?`<div class="timeta">期限 ${t.deadline}</div>`:''}
+      </div>
+      <div class="tidur">${t.duration}m</div>`;
+    div.onclick=()=>toggleSel(i,div);
+    l.appendChild(div);
+  });
+  rawTasks.forEach((t,i)=>{if(t.priority==='高')toggleSel(i,l.children[i]);});
+  enableGo();
+}
+
+function toggleSel(i,el){
+  const x=selIdx.indexOf(i);
+  if(x===-1){selIdx.push(i);el.classList.add('sel');}
+  else{selIdx.splice(x,1);el.classList.remove('sel');}
+  $('selBadge').textContent=`${selIdx.length}件選択`;
+  enableGo();
+}
+function enableGo(){
+  $('btnGo').disabled=!(selIdx.length||$('manIn').value.trim());
+}
+$('manIn').addEventListener('input',enableGo);
+
+// ── start day ──
+async function startDay(){
+  $('btnGo').disabled=true;
+  $('btnGo').innerHTML='<span>生成中...</span>';
+  const tasks=selIdx.map(i=>rawTasks[i]);
+  const manual=$('manIn').value.trim();
+  const n=new Date(),cafe=isCafe(n.getDay()),day=DAYSF[n.getDay()];
+  const taskStr=tasks.map(t=>`${t.project},${t.task},${t.priority},${t.duration||60}`).join('\n')
+    +(manual?'\n'+manual:'');
+  try{
+    schedule=await callSchedAPI(taskStr,cafe,day,'07:00');
+    await saveSched();
+    showScreen('tl-screen');
+    renderTL();startClock();setTimeout(scrollToNow,400);
+  }catch(e){
+    $('btnGo').disabled=false;
+    $('btnGo').innerHTML='<span>今日をはじめる</span><span>→</span>';
+  }
+}
+
+// ── API ──
+async function callSchedAPI(taskStr,cafe,day,startTime){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',max_tokens:1000,
+      system:`LONGBRIDGEのスケジューラー。今日は${day}。${cafe?'カフェ営業日（木金土）。12:00開店準備、13:00カフェ営業。':'非営業日。午後も作業可能。'}
+
+${startTime}からスケジュールを生成。
+
+ルール：
+- タスクは指定された時間(分)でブロックを作る。指定なければ60分。
+- タスクの内容は一切変えない・分解しない。タスク名をそのまま使う。
+- 25分作業ブロック→5分休憩ブロックのリズムを基本とする。
+  ただしタスクの時間が25分を超える場合は、タスクを連続ブロックとして並べ、25分ごとに小休憩を挟む。
+  例：60分タスク → 07:00 作業①(25分) → 07:25 小休憩(5分) → 07:30 作業②(30分)
+- 昼食ブロックを12:00前後に入れる（30分）
+- カフェ日は12:00に「カフェ準備」、13:00に「カフェ営業」ブロックを入れる
+- typeはwork/break/meal/cafeのいずれか
+- breakとmeal以外はprojectを必ず入れる
+- doneは常にfalse
+
+JSONのみ返す：
+{"blocks":[{"time":"07:00","type":"work","project":"","task":"","duration":25,"done":false}]}`,
+      messages:[{role:'user',content:`タスク（プロジェクト,タスク名,優先度,時間分）：\n${taskStr}`}]
+    })
+  });
+  const d=await r.json();
+  const raw=d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  return JSON.parse(raw).blocks||[];
+}
+
+// ── render timeline ──
+function renderTL(){
+  const con=$('tlBlocks');con.innerHTML='';
+  schedule.forEach((b,i)=>{
+    const isB=b.type==='break'||b.type==='meal';
+    const isC=b.type==='cafe';
+    const el=document.createElement('div');
+    el.className=`tb${isB?' brk':isC?' cafe-b':''}${b.done?' done past':''}`;
+    el.dataset.i=i;
+    const c=b.project?pc(b.project):DC;
+    el.innerHTML=`
+      <div class="tb-t"><span>${b.time}</span></div>
+      ${(!isB&&!isC)?`<div class="tb-bar" style="background:${c}"></div>`:'<div style="width:3px;flex-shrink:0"></div>'}
+      <div class="tb-body">
+        ${b.project?`<div class="tb-proj" style="color:${c}">${b.project}</div>`:''}
+        <div class="tb-name">${b.task}</div>
+        ${(!isB&&!isC&&b.duration)?`<div class="tb-dur">${b.duration}分</div>`:''}
+      </div>
+      <div class="tb-done"><div class="dc"><span class="dci">✓</span></div></div>`;
+    if(!isB&&!isC) el.onclick=()=>tapBlock(i,el);
+    con.appendChild(el);
+  });
+  updateProg();updateNowLine();updateNowNext();
+}
+
+function tapBlock(i,el){
+  if(schedule[i].done){
+    schedule[i].done=false;
+    el.classList.remove('done','past');
+    updateProg();saveSched();return;
+  }
+  openFocus(i);
+}
+
+// ── now line ──
+function updateNowLine(){
+  const line=$('nowLine'),n=new Date();
+  const nm=n.getHours()*60+n.getMinutes();
+  const blocks=document.querySelectorAll('#tlBlocks .tb');
+  if(!blocks.length){line.style.display='none';return;}
+  let found=false;
+  blocks.forEach((el,i)=>{
+    if(!schedule[i])return;
+    const bm=toM(schedule[i].time);
+    const nm2=(i+1<schedule.length)?toM(schedule[i+1].time):bm+30;
+    const cur=nm>=bm&&nm<nm2&&!schedule[i].done;
+    el.classList.toggle('current',cur);
+    if(nm>nm2&&!schedule[i].done) el.classList.add('past');
+    if(cur&&!found){
+      found=true;
+      const ratio=(nm-bm)/Math.max(1,nm2-bm);
+      const sr=$('tlScroll'),st=sr.scrollTop;
+      const tr=sr.getBoundingClientRect(),er=el.getBoundingClientRect();
+      line.style.top=((er.top-tr.top)+st+er.height*ratio)+'px';
+      line.style.display='block';
+    }
+  });
+  if(!found) line.style.display='none';
+}
+
+// ── NOW/NEXT card ──
+function updateNowNext(){
+  const n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  const work=schedule.filter(b=>b.type==='work'&&!b.done);
+  // current
+  let cur=null,nxt=null;
+  for(let i=0;i<schedule.length;i++){
+    const b=schedule[i];
+    if(b.type!=='work'||b.done) continue;
+    const bm=toM(b.time);
+    const em=(i+1<schedule.length)?toM(schedule[i+1].time):bm+(b.duration||25);
+    if(nm>=bm&&nm<em){cur={b,i};continue;}
+    if(nm<bm&&!nxt){nxt={b,i};break;}
+  }
+  if(!cur&&!nxt){$('nowNext').classList.remove('show');return;}
+  $('nowNext').classList.add('show');
+  if(cur){
+    const c=cur.b;
+    $('nnNowProj').textContent=c.project||'';
+    $('nnNowProj').style.color=c.project?pc(c.project):DC;
+    $('nnNowTask').textContent=c.task;
+    // remaining in block
+    const bm=toM(c.time);
+    const dur=c.duration||25;
+    const rem=Math.max(0,(bm+dur)-nm);
+    $('nnTimer').textContent=rem>0?`${rem}分`:'—';
+  } else {
+    $('nnNowTask').textContent='—';$('nnTimer').textContent='—';
+    $('nnNowProj').textContent='';
+  }
+  if(nxt){
+    $('nnNextProj').textContent=nxt.b.project||'';
+    $('nnNextProj').style.color=nxt.b.project?pc(nxt.b.project):DC;
+    $('nnNextTask').textContent=nxt.b.task;
+  } else {
+    $('nnNextTask').textContent='以降の作業はありません';
+    $('nnNextProj').textContent='';
+  }
+}
+
+function scrollToNow(){
+  const c=document.querySelector('#tlBlocks .tb.current');
+  if(c) c.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ── progress ──
+function updateProg(){
+  const work=schedule.filter(b=>b.type==='work');
+  const done=work.filter(b=>b.done);
+  const pct=work.length?Math.round(done.length/work.length*100):0;
+  $('progC').setAttribute('stroke-dashoffset',String(81.68*(1-pct/100)));
+  $('progPct').textContent=pct+'%';
+}
+
+// ── break banner ──
+function checkBreak(){
+  const n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  schedule.forEach((b,i)=>{
+    if((b.type==='break'||b.type==='meal')&&!notified.has(i)){
+      if(Math.abs(nm-toM(b.time))<=1){
+        notified.add(i);
+        $('brkBanner').classList.add('show');
+        setTimeout(()=>$('brkBanner').classList.remove('show'),15000);
+      }
+    }
+  });
+}
+
+// ── FOCUS ──
+function openFocus(i){
+  focusIdx=i;
+  const b=schedule[i];
+  fPhase='work';
+  fTotalSecs=(b.duration||25)*60;
+  fSecsLeft=fTotalSecs;
+  $('fProj').textContent=b.project||'';
+  $('fProj').style.color=b.project?pc(b.project):DC;
+  $('fTask').textContent=b.task;
+  setFocusPhaseUI();
+  showScreen('focus-screen');
+  startFT();
+}
+
+function setFocusPhaseUI(){
+  const isWork=fPhase==='work';
+  const isBrk=fPhase==='break';
+  const isChoice=fPhase==='choice';
+
+  // phase tag
+  const tag=$('fPhaseTag');
+  if(isWork){tag.textContent='集中';tag.className='focus-phase-tag work';}
+  else if(isBrk){tag.textContent='小休憩';tag.className='focus-phase-tag brk';}
+  else{tag.textContent='休憩終了';tag.className='focus-phase-tag brk';}
+
+  // ring color
+  $('fRing').className='fring '+(isWork?'work':'brk');
+  $('fArc').style.stroke=isWork?'#b8720e':'#3a6a9a';
+
+  // label
+  $('fLbl').textContent=isWork?'集中中':isBrk?'休憩中':'選択してください';
+
+  // actions
+  const fa=$('fActions');fa.innerHTML='';
+  if(isWork){
+    fa.innerHTML=`
+      <button class="fbtn" onclick="skipBreak()">スキップ → 完了</button>
+      <button class="fbtn primary" onclick="()=>{}">集中中</button>`;
+  } else if(isBrk){
+    fa.innerHTML=`<button class="fbtn blue" style="pointer-events:none">休憩中...</button>`;
+  } else {
+    // choice
+    fa.innerHTML=`
+      <button class="fbtn" onclick="continueTask()">継続する</button>
+      <button class="fbtn primary" onclick="completeTask()">完了して次へ →</button>`;
+    $('fTime').textContent='';
+    $('fLbl').textContent='このタスク、どうしますか？';
+  }
+}
+
+function startFT(){
+  clearFT();
+  fTimer=setInterval(()=>{
+    if(fSecsLeft>0){
+      fSecsLeft--;
+      updateFRing();
+      if(fPhase==='work'&&fSecsLeft===0) endWorkPhase();
+      if(fPhase==='break'&&fSecsLeft===0) endBreakPhase();
+    }
+  },1000);
+}
+function clearFT(){if(fTimer){clearInterval(fTimer);fTimer=null;}}
+
+function updateFRing(){
+  const m=Math.floor(fSecsLeft/60),s=fSecsLeft%60;
+  $('fTime').textContent=`${pad(m)}:${pad(s)}`;
+  const pct=fSecsLeft/fTotalSecs;
+  $('fArc').setAttribute('stroke-dashoffset',String(408.41*(1-pct)));
+}
+
+function endWorkPhase(){
+  clearFT();
+  fPhase='break';
+  fTotalSecs=5*60;fSecsLeft=fTotalSecs;
+  updateFRing();
+  setFocusPhaseUI();
+  startFT();
+}
+
+function endBreakPhase(){
+  clearFT();
+  fPhase='choice';
+  setFocusPhaseUI();
+}
+
+function skipBreak(){
+  clearFT();
+  fPhase='choice';
+  setFocusPhaseUI();
+}
+
+function continueTask(){
+  // restart work timer for same task
+  fPhase='work';
+  fTotalSecs=(schedule[focusIdx]?.duration||25)*60;
+  fSecsLeft=fTotalSecs;
+  updateFRing();
+  setFocusPhaseUI();
+  startFT();
+}
+
+function completeTask(){
+  clearFT();
+  if(focusIdx>=0){
+    schedule[focusIdx].done=true;
+    saveSched();
+  }
+  renderTL();updateNowNext();
+  showScreen('tl-screen');
+  scrollToNow();
+}
+
+// ── regen ──
+async function regenSchedule(){
+  const btn=$('btnRegen');
+  btn.classList.add('busy');
+  $('regenIco').textContent='⟳';$('regenTxt').textContent='再スケジュール中...';btn.disabled=true;
+  const n=new Date(),nm=n.getHours()*60+n.getMinutes();
+  const rem=schedule.filter(b=>!b.done&&b.type==='work'&&toM(b.time)>=nm);
+  if(!rem.length){btn.classList.remove('busy');btn.disabled=false;return;}
+  const hh=pad(n.getHours()),mm=pad(Math.min(Math.ceil(n.getMinutes()/5)*5,55));
+  const st=`${hh}:${mm}`;
+  const ts=rem.map(b=>`${b.project},${b.task},高,${b.duration||25}`).join('\n');
+  try{
+    const nb=await callSchedAPI(ts,isCafe(n.getDay()),DAYSF[n.getDay()],st);
+    const done=schedule.filter(b=>b.done||toM(b.time)<nm);
+    schedule=[...done,...nb].sort((a,b)=>toM(a.time)-toM(b.time));
+    await saveSched();renderTL();scrollToNow();
+  }catch(e){}
+  btn.classList.remove('busy');btn.disabled=false;
+  $('regenIco').textContent='↺';$('regenTxt').textContent='残りを再スケジュール';
+}
+
+// ── storage ──
+async function saveSched(){
+  try{await window.storage.set('lb-v4',JSON.stringify({date:new Date().toDateString(),blocks:schedule}));}catch(e){}
+}
+async function loadSched(){
+  try{
+    const r=await window.storage.get('lb-v4');if(!r)return false;
+    const s=JSON.parse(r.value);
+    if(s.date===new Date().toDateString()&&s.blocks?.length){schedule=s.blocks;return true;}
+  }catch(e){}
+  return false;
+}
+
+// ── boot ──
+async function boot(){
+  initRitual();showScreen('ritual');
+  if(await loadSched()){showScreen('tl-screen');renderTL();startClock();setTimeout(scrollToNow,500);}
+}
+boot();
+</script>
+</body>
+</html>
