@@ -256,33 +256,97 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 
 /* NOW / NEXT CARD */
 .now-next{
-  background:var(--bg3);
-  border-bottom:0.5px solid var(--line);
-  flex-shrink:0;display:none;
+  flex:1;display:none;flex-direction:column;
+  padding:0 22px;
+  overflow:hidden;
 }
-.now-next.show{display:block;}
-.nn-row{
-  padding:10px 18px;
+.now-next.show{display:flex;}
+
+.nn-now-card{
+  flex:1;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;padding:24px 0 12px;
+  cursor:pointer;transition:opacity .15s;min-height:0;
+}
+.nn-now-card:active{opacity:.8;}
+.nn-now-label{
+  font-size:10px;font-family:var(--mono);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:10px;
+}
+.nn-now-proj{
+  font-size:12px;font-family:var(--mono);letter-spacing:.04em;
+  margin-bottom:6px;
+}
+.nn-now-task{
+  font-family:var(--serif);font-size:28px;color:var(--text);
+  line-height:1.25;margin-bottom:16px;
+  max-width:100%;overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+.nn-now-timer{
+  font-family:var(--serif);font-size:52px;color:var(--amber);
+  line-height:1;font-variant-numeric:tabular-nums;
+  margin-bottom:6px;
+}
+.nn-now-hint{
+  font-size:11px;font-family:var(--mono);color:var(--text3);
+  letter-spacing:.03em;
+}
+.nn-now-empty{
+  font-size:15px;color:var(--text3);font-family:var(--mono);
+}
+
+/* NEXT card */
+.nn-next-card{
+  flex-shrink:0;
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:14px;
+  padding:14px 18px;margin-bottom:12px;
   display:flex;align-items:center;gap:12px;
-  border-bottom:0.5px solid var(--line);
 }
-.nn-row:last-child{border-bottom:none;}
-.nn-tag{
+.nn-next-label{
   font-size:9px;font-family:var(--mono);letter-spacing:.07em;
-  text-transform:uppercase;width:30px;flex-shrink:0;font-weight:400;
+  text-transform:uppercase;color:var(--text3);width:30px;flex-shrink:0;
 }
-.nn-row.now .nn-tag{color:var(--amber);}
-.nn-row.next .nn-tag{color:var(--text3);}
-.nn-body{flex:1;min-width:0;}
-.nn-proj{font-size:10px;font-family:var(--mono);letter-spacing:.03em;margin-bottom:2px;}
-.nn-task{font-size:14px;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.nn-row.next .nn-task{color:var(--text2);font-size:13px;}
-.nn-timer{
-  font-size:13px;font-family:var(--mono);
-  color:var(--amber);font-variant-numeric:tabular-nums;
-  flex-shrink:0;min-width:44px;text-align:right;
+.nn-next-body{flex:1;min-width:0;}
+.nn-next-proj{font-size:10px;font-family:var(--mono);letter-spacing:.03em;margin-bottom:2px;}
+.nn-next-task{font-size:13px;color:var(--text2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* TL toggle + drawer */
+.tl-toggle{
+  flex-shrink:0;
+  padding:10px 22px;padding-bottom:calc(12px + env(safe-area-inset-bottom));
+  display:flex;gap:8px;
 }
-.nn-row.next .nn-timer{display:none;}
+.btn-tl-toggle{
+  flex:1;padding:12px;
+  background:var(--bg3);border:0.5px solid var(--line2);border-radius:11px;
+  font-family:var(--mono);font-size:12px;color:var(--text2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .15s;
+}
+.btn-tl-toggle:active{background:var(--bg4);}
+.btn-tl-toggle.active{background:var(--amber-bg);color:var(--amber);border-color:var(--amber);}
+
+.tl-drawer{
+  position:absolute;inset:0;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .3s ease;
+  z-index:50;
+}
+.tl-drawer.open{transform:translateY(0);}
+.tl-drawer-hdr{
+  padding:14px 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:0.5px solid var(--line);flex-shrink:0;
+  background:var(--bg3);
+}
+.tl-drawer-title{font-size:13px;font-family:var(--mono);color:var(--text2);}
+.btn-close-drawer{
+  font-size:12px;font-family:var(--mono);color:var(--text3);
+  background:transparent;border:none;cursor:pointer;padding:4px 8px;
+}
 
 /* BREAK BANNER */
 .brk-banner{
@@ -293,11 +357,11 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 }
 .brk-banner.show{display:block;}
 
-/* SCROLL */
+/* SCROLL (inside drawer) */
 .tl-scroll{
   flex:1;overflow-y:auto;
   -webkit-overflow-scrolling:touch;
-  position:relative;padding-bottom:100px;
+  position:relative;padding-bottom:40px;
 }
 .now-line{
   position:absolute;left:0;right:0;height:1px;background:var(--red);
@@ -358,20 +422,8 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 .tb.done .dci{display:block;}
 .tb.brk .tb-done,.tb.cafe-b .tb-done{visibility:hidden;}
 
-/* REGEN */
-.regen-wrap{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:10px 18px;padding-bottom:calc(34px + env(safe-area-inset-bottom));
-  background:linear-gradient(to top, #f8f6f2 65%, transparent);
-}
-.btn-regen{
-  width:100%;padding:13px;
-  background:var(--bg3);border:0.5px solid var(--line2);border-radius:11px;
-  font-family:var(--mono);font-size:12px;color:var(--text2);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;
-}
-.btn-regen:active{background:var(--bg4);}
-.btn-regen.busy{color:var(--amber);}
+/* REGEN (handled by tl-toggle buttons) */
+.btn-tl-toggle.busy{color:var(--amber);}
 
 /* ══════════════════════════
    FOCUS
@@ -568,20 +620,19 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   </div>
 
   <!-- NOW / NEXT -->
-  <div class="now-next" id="nowNext">
-    <div class="nn-row now">
-      <div class="nn-tag">now</div>
-      <div class="nn-body">
-        <div class="nn-proj" id="nnNowProj">—</div>
-        <div class="nn-task" id="nnNowTask">—</div>
-      </div>
-      <div class="nn-timer" id="nnTimer">—</div>
+  <div class="now-next show" id="nowNext">
+    <div class="nn-now-card" id="nnNowCard" onclick="tapNow()">
+      <div class="nn-now-label">now</div>
+      <div class="nn-now-proj" id="nnNowProj"></div>
+      <div class="nn-now-task" id="nnNowTask">—</div>
+      <div class="nn-now-timer" id="nnTimer">—</div>
+      <div class="nn-now-hint" id="nnHint">タップで集中モード</div>
     </div>
-    <div class="nn-row next">
-      <div class="nn-tag">next</div>
-      <div class="nn-body">
-        <div class="nn-proj" id="nnNextProj">—</div>
-        <div class="nn-task" id="nnNextTask">—</div>
+    <div class="nn-next-card" id="nnNextCard">
+      <div class="nn-next-label">next</div>
+      <div class="nn-next-body">
+        <div class="nn-next-proj" id="nnNextProj"></div>
+        <div class="nn-next-task" id="nnNextTask">—</div>
       </div>
     </div>
   </div>
@@ -590,13 +641,25 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
     休憩の時間です ── タップして閉じる
   </div>
 
-  <div class="tl-scroll" id="tlScroll">
-    <div class="now-line" id="nowLine"><div class="now-dot"></div></div>
-    <div id="tlBlocks"></div>
-    <div class="regen-wrap">
-      <button class="btn-regen" id="btnRegen" onclick="regenSchedule()">
-        <span id="regenIco">↺</span><span id="regenTxt">残りを再スケジュール</span>
-      </button>
+  <!-- Bottom buttons -->
+  <div class="tl-toggle">
+    <button class="btn-tl-toggle" onclick="toggleDrawer()">
+      <span>📋</span><span>スケジュール</span>
+    </button>
+    <button class="btn-tl-toggle" onclick="regenSchedule()" id="btnRegen">
+      <span id="regenIco">↺</span><span id="regenTxt">再スケジュール</span>
+    </button>
+  </div>
+
+  <!-- Schedule drawer (slides up) -->
+  <div class="tl-drawer" id="tlDrawer">
+    <div class="tl-drawer-hdr">
+      <div class="tl-drawer-title">今日のスケジュール</div>
+      <button class="btn-close-drawer" onclick="toggleDrawer()">✕ 閉じる</button>
+    </div>
+    <div class="tl-scroll" id="tlScroll">
+      <div class="now-line" id="nowLine"><div class="now-dot"></div></div>
+      <div id="tlBlocks"></div>
     </div>
   </div>
 </div>
@@ -1047,8 +1110,8 @@ function updateNowNext(){
     if(nm>=bm&&nm<em){cur={b,i};continue;}
     if(nm<bm&&!nxt){nxt={b,i};break;}
   }
-  if(!cur&&!nxt){$('nowNext').classList.remove('show');return;}
-  $('nowNext').classList.add('show');
+  
+  const card=$('nnNowCard');
   if(cur){
     $('nnNowProj').textContent=cur.b.project||'';
     $('nnNowProj').style.color=cur.b.project?pc(cur.b.project):DC;
@@ -1056,16 +1119,60 @@ function updateNowNext(){
     const bm=toM(cur.b.time),dur=cur.b.duration||25;
     const rem=Math.max(0,(bm+dur)-nm);
     $('nnTimer').textContent=rem>0?`${rem}分`:'—';
+    $('nnHint').textContent='タップで集中モード';
+    card.dataset.idx=cur.i;
+    $('nnNowLabel'||'').textContent;
+  } else if(nxt){
+    // 次のタスクまで待ち
+    $('nnNowProj').textContent='';
+    $('nnNowTask').textContent='次のタスクまで待機中';
+    const wait=toM(nxt.b.time)-nm;
+    $('nnTimer').textContent=wait>0?`${wait}分後`:'—';
+    $('nnHint').textContent='';
+    card.dataset.idx=-1;
   } else {
-    $('nnNowTask').textContent='—';$('nnTimer').textContent='—';$('nnNowProj').textContent='';
+    // 全て完了 or スケジュール外
+    const work=schedule.filter(b=>b.type==='work');
+    const done=work.filter(b=>b.done);
+    if(work.length&&done.length===work.length){
+      $('nnNowProj').textContent='';
+      $('nnNowTask').textContent='今日のタスク完了';
+      $('nnTimer').textContent='✓';
+      $('nnHint').textContent='おつかれさまでした';
+    } else {
+      $('nnNowProj').textContent='';
+      $('nnNowTask').textContent='—';
+      $('nnTimer').textContent='—';
+      $('nnHint').textContent='';
+    }
+    card.dataset.idx=-1;
   }
-  if(nxt){
+  
+  // NEXT card
+  const nextCard=$('nnNextCard');
+  if(nxt&&cur){
+    nextCard.style.display='flex';
     $('nnNextProj').textContent=nxt.b.project||'';
     $('nnNextProj').style.color=nxt.b.project?pc(nxt.b.project):DC;
     $('nnNextTask').textContent=nxt.b.task;
+  } else if(!cur&&nxt){
+    // nxtはあるがcurがない → nextをnow扱いにしたので非表示
+    nextCard.style.display='none';
   } else {
-    $('nnNextTask').textContent='以降の作業はありません';$('nnNextProj').textContent='';
+    nextCard.style.display='flex';
+    $('nnNextProj').textContent='';
+    $('nnNextTask').textContent='以降の作業はありません';
   }
+}
+
+function tapNow(){
+  const idx=parseInt($('nnNowCard').dataset.idx);
+  if(idx>=0) openFocus(idx);
+}
+
+// ── Drawer ──
+function toggleDrawer(){
+  $('tlDrawer').classList.toggle('open');
 }
 
 function scrollToNow(){
