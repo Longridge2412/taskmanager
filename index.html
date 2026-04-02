@@ -12,7 +12,8 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
 html,body{height:100%;overflow:hidden;background:#f8f6f2;}
-@media(min-width:500px){html,body{background:#e8e4de;display:flex;align-items:center;justify-content:center;}.app{height:min(100dvh,860px);border-radius:18px;box-shadow:0 8px 48px rgba(0,0,0,0.15);border:0.5px solid rgba(0,0,0,0.1);}}
+@media(min-width:500px){html,body{background:#f8f6f2;}}
+@media(min-width:769px){html,body{overflow:auto;}}
 
 :root{
   --bg:#f8f6f2;
@@ -42,6 +43,12 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   background:var(--bg);
   position:relative;overflow:hidden;
 }
+@media(min-width:769px){
+  .app{
+    max-width:100%;height:100vh;
+    overflow:auto;
+  }
+}
 
 .screen{
   position:absolute;inset:0;
@@ -50,6 +57,10 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   transition:opacity 0.25s ease;
 }
 .screen.active{opacity:1;pointer-events:all;}
+@media(min-width:769px){
+  .screen{position:relative;inset:auto;min-height:100vh;}
+  .screen:not(.active){display:none;}
+}
 
 /* ══════════════════════════
    SETUP
@@ -72,7 +83,7 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 }
 .setup-sub a{color:var(--amber);text-decoration:none;}
 
-.setup-field{width:100%;margin-bottom:14px;text-align:left;}
+.setup-field{width:100%;max-width:480px;margin-bottom:14px;text-align:left;}
 .setup-field-label{
   font-size:10px;font-family:var(--mono);color:var(--text3);
   letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;padding-left:4px;
@@ -521,6 +532,63 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
   background:linear-gradient(to top,rgba(248,246,242,0.94) 50%,transparent);
 }
 .foot-logo img{height:14px;width:auto;opacity:0.22;filter:grayscale(100%);}
+
+/* ══════════════════════════
+   PC FULL-WIDTH RESPONSIVE
+══════════════════════════ */
+@media(min-width:769px){
+  /* RITUAL */
+  .ritual-top{padding:28px 0 0;max-width:640px;margin:0 auto;width:100%;}
+  .ritual-body{padding:24px 0 0;max-width:640px;margin:0 auto;width:100%;}
+  .ritual-foot{padding:14px 0 36px;max-width:640px;margin:0 auto;width:100%;}
+
+  /* TIMELINE header */
+  .tl-hdr{padding:12px 32px 10px;}
+
+  /* NOW/NEXT card */
+  .now-next{padding:0 32px;max-width:800px;margin:0 auto;width:100%;}
+  .nn-now-task{font-size:34px;}
+  .nn-now-timer{font-size:60px;}
+
+  /* TL toggle buttons */
+  .tl-toggle{
+    padding:10px 32px 16px;
+    max-width:800px;margin:0 auto;width:100%;
+    position:relative;
+  }
+
+  /* TL drawer */
+  .tl-drawer{
+    position:fixed;
+    inset:0;
+    border-radius:0;
+  }
+  .tl-scroll{max-width:800px;margin:0 auto;width:100%;}
+
+  /* Time blocks */
+  .tb-t{width:72px;padding-left:24px;}
+  .tb-body{padding:11px 12px 11px 14px;}
+  .tb-done{width:56px;}
+
+  /* FOCUS */
+  .focus-body{max-width:640px;margin:0 auto;width:100%;padding:20px 32px 32px;}
+  .fring{width:180px;height:180px;}
+  .fring svg{width:180px;height:180px;}
+  .focus-actions{max-width:400px;margin:0 auto;}
+
+  /* BREAK BANNER */
+  .brk-banner{padding:10px 32px;}
+
+  /* TOAST */
+  .toast{bottom:40px;}
+
+  /* FOOTER LOGO */
+  .foot-logo{
+    position:relative;
+    padding-bottom:12px;
+    background:none;
+  }
+}
 </style>
 </head>
 <body>
