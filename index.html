@@ -198,6 +198,24 @@ html,body{height:100%;overflow:hidden;background:#f8f6f2;}
 }
 .tidur:active{transform:scale(0.9);}
 
+/* Duration chip selector */
+.ti-dur-chips{
+  display:none;flex-wrap:wrap;gap:6px;
+  padding:8px 0 4px 30px;
+}
+.ti.sel .ti-dur-chips{display:flex;}
+.dur-chip{
+  padding:5px 11px;border-radius:16px;
+  border:1px solid var(--line2);background:var(--bg3);
+  font-size:12px;font-family:var(--mono);color:var(--text2);
+  cursor:pointer;transition:all .15s;user-select:none;-webkit-user-select:none;
+}
+.dur-chip:active{transform:scale(0.93);}
+.dur-chip.active{
+  background:var(--amber);border-color:var(--amber);
+  color:#fff;font-weight:400;
+}
+
 .manual-box{
   background:var(--bg3);border:0.5px solid var(--line2);border-radius:14px;overflow:hidden;
 }
@@ -861,15 +879,19 @@ function renderTaskList(){
     const div=document.createElement('div');
     div.className='ti';div.dataset.i=i;
     const isOverdue=t.deadline&&isDeadlinePast(t.deadline);
+    const durChipsHtml=DUR_OPTIONS.map(d=>
+      `<div class="dur-chip${d===t.duration?' active':''}" data-dur="${d}" data-i="${i}" onclick="selectDur(event,${i},${d})">${d}m</div>`
+    ).join('');
     div.innerHTML=`
       <div class="tichk"><span class="tichk-i">✓</span></div>
       <div class="tiinfo">
         <div class="tiproj" style="color:${c}">${esc(t.project)}</div>
         <div class="tiname">${esc(t.task)}</div>
         ${t.deadline?`<div class="timeta${isOverdue?' overdue':''}">${isOverdue?'⚠ ':''}期限 ${esc(t.deadline)}</div>`:''}
+        <div class="ti-dur-chips">${durChipsHtml}</div>
       </div>
-      <div class="tidur" data-i="${i}" onclick="cycleDur(event,${i})">${t.duration}m</div>`;
-    div.onclick=(e)=>{if(!e.target.closest('.tidur'))toggleSel(i,div);};
+      <div class="tidur" data-i="${i}">${t.duration}m</div>`;
+    div.onclick=(e)=>{if(!e.target.closest('.dur-chip'))toggleSel(i,div);};
     l.appendChild(div);
   });
   // 優先度「高」を自動選択
@@ -877,14 +899,18 @@ function renderTaskList(){
   enableGo();
 }
 
-// タップで時間をサイクル: 30→60→90→120→30...
-const DUR_OPTIONS=[30,60,90,120];
-function cycleDur(e,i){
+// チップ選択で時間を設定
+const DUR_OPTIONS=[15,30,45,60,90,120];
+function selectDur(e,i,dur){
   e.stopPropagation();
-  const cur=rawTasks[i].duration;
-  const idx=DUR_OPTIONS.indexOf(cur);
-  rawTasks[i].duration=DUR_OPTIONS[(idx+1)%DUR_OPTIONS.length];
-  e.target.textContent=rawTasks[i].duration+'m';
+  rawTasks[i].duration=dur;
+  // チップのactive状態を更新
+  const row=e.target.closest('.ti');
+  row.querySelectorAll('.dur-chip').forEach(c=>{
+    c.classList.toggle('active',parseInt(c.dataset.dur)===dur);
+  });
+  // バッジ表示も更新
+  row.querySelector('.tidur').textContent=dur+'m';
 }
 
 function isDeadlinePast(dl){
